@@ -239,7 +239,6 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void onDeviceClick(int pos) {
-
 	    if (mScanning)
 	      stopScan();
 

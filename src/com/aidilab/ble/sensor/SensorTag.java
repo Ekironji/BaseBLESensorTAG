@@ -46,11 +46,16 @@ public class SensorTag {
       UUID_IRT_CONF = fromString("f000aa02-0451-4000-b000-000000000000"), // 0: disable, 1: enable
       UUID_IRT_PERI = fromString("f000aa03-0451-4000-b000-000000000000"), // Period in tens of milliseconds
 
-      UUID_ACC_SERV = fromString("f000aa10-0451-4000-b000-000000000000"),
-      UUID_ACC_DATA = fromString("f000aa11-0451-4000-b000-000000000000"),
-      UUID_ACC_CONF = fromString("f000aa12-0451-4000-b000-000000000000"), // 0: disable, 1: enable
-      UUID_ACC_PERI = fromString("f000aa13-0451-4000-b000-000000000000"), // Period in tens of milliseconds
-
+//      UUID_ACC_SERV = fromString("f000aa10-0451-4000-b000-000000000000"),
+//      UUID_ACC_DATA = fromString("f000aa11-0451-4000-b000-000000000000"),
+//      UUID_ACC_CONF = fromString("f000aa12-0451-4000-b000-000000000000"), // 0: disable, 1: enable
+//      UUID_ACC_PERI = fromString("f000aa13-0451-4000-b000-000000000000"), // Period in tens of milliseconds
+      
+      UUID_ACC_SERV = fromString("f000aa10-0451-4000-cb00-5ec0a1d1cb00"),
+      UUID_ACC_DATA = fromString("f000aa13-0451-4000-cb00-5ec0a1d1cb00"),
+      UUID_ACC_CONF = fromString("f000aa11-0451-4000-cb00-5ec0a1d1cb00"), // 0: disable, 1: enable
+      UUID_ACC_PERI = fromString("f000aa14-0451-4000-cb00-5ec0a1d1cb00"), // Period in tens of milliseconds
+      
       UUID_HUM_SERV = fromString("f000aa20-0451-4000-b000-000000000000"),
       UUID_HUM_DATA = fromString("f000aa21-0451-4000-b000-000000000000"),
       UUID_HUM_CONF = fromString("f000aa22-0451-4000-b000-000000000000"), // 0: disable, 1: enable

@@ -27,8 +27,11 @@
     <string name="image">Image</string>
     
     <!-- Device Filter -->
-    <string-array name="device_filter"><item>SensorTag</item></string-array>
-    
+    <string-array name="device_filter">
+        <item>SensorTag</item>
+        <item>FizzlyTag</item>      
+    </string-array>
+        
     <string name="empty3">*\n*\n*\n</string>
 
 </resources>

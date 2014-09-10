@@ -240,15 +240,23 @@ public class DeviceActivity extends FragmentActivity {
   			break;
 
   		// Barometer calibration
-			if (confUuid.equals(SensorTag.UUID_BAR_CONF) && enable) {
-				calibrateBarometer();
-			}
+		if (confUuid.equals(SensorTag.UUID_BAR_CONF) && enable) {
+			calibrateBarometer();
+		}
 			
   		BluetoothGattService serv = mBtGatt.getService(servUuid);
   		BluetoothGattCharacteristic charac = serv.getCharacteristic(confUuid);
   		byte value =  enable ? sensor.getEnableSensorCode() : Sensor.DISABLE_SENSOR_CODE;
   		mBtLeService.writeCharacteristic(charac, value);
 			mBtLeService.waitIdle(GATT_TIMEOUT);
+			
+		if (confUuid.equals(SensorTag.UUID_ACC_CONF) && enable) {
+			charac = serv.getCharacteristic(SensorTag.UUID_ACC_PERI);
+	  		value = (byte) 2;
+	  		mBtLeService.writeCharacteristic(charac, value);
+	  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " +value);
+				mBtLeService.waitIdle(GATT_TIMEOUT);
+		}	
   	}
   	
   }

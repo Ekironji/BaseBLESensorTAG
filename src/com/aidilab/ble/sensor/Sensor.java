@@ -119,7 +119,7 @@ public enum Sensor {
   		Integer y = (int) value[1];
   		Integer z = (int) value[2] * -1;
 
-  		return new Point3D(x / 64.0, y / 64.0, z / 64.0);
+  		return new Point3D(x , y , z );
   	}
   },
 

@@ -58,6 +58,8 @@ import android.widget.Toast;
 import com.aidilab.ble.common.GattInfo;
 import com.aidilab.ble.fragment.DeviceViewFragment;
 import com.aidilab.ble.sensor.BluetoothLeService;
+import com.aidilab.ble.sensor.Fizzly;
+import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.sensor.Sensor;
 import com.aidilab.ble.sensor.SensorTag;
 import com.aidilab.ble.utils.BarometerCalibrationCoefficients;
@@ -74,16 +76,16 @@ public class DeviceActivity extends FragmentActivity {
 	private DeviceViewFragment mDeviceView = null;
 
 	// BLE
-	private BluetoothLeService mBtLeService = null;
-	private BluetoothDevice mBluetoothDevice = null;
-	private BluetoothGatt mBtGatt = null;
-	private List<BluetoothGattService> mServiceList = null;
-	private static final int GATT_TIMEOUT = 100; // milliseconds
-	private boolean mServicesRdy = false;
-	private boolean mIsReceiving = false;
+	private BluetoothLeService         mBtLeService     = null;
+	private BluetoothDevice            mBtDevice        = null;
+	private BluetoothGatt              mBtGatt          = null;
+	private List<BluetoothGattService> mServiceList     = null;
+	private static final int           GATT_TIMEOUT     = 100; // milliseconds
+	private boolean                    mServicesRdy     = false;
+	private boolean                    mIsReceiving     = false;
 
 	// SensorTag
-	private List<Sensor> mEnabledSensors = new ArrayList<Sensor>();
+	private List<FizzlySensor> mEnabledSensors = new ArrayList<FizzlySensor>();
 	private BluetoothGattService mOadService = null;
 	private BluetoothGattService mConnControlService = null;
 	private boolean mMagCalibrateRequest = true;
@@ -107,7 +109,7 @@ public class DeviceActivity extends FragmentActivity {
 	    
 	    // BLE
 	    mBtLeService = BluetoothLeService.getInstance();
-	    mBluetoothDevice = intent.getParcelableExtra(EXTRA_DEVICE);
+	    mBtDevice = intent.getParcelableExtra(EXTRA_DEVICE);
 	    mServiceList = new ArrayList<BluetoothGattService>();
 	
 	    // GATT database
@@ -119,7 +121,8 @@ public class DeviceActivity extends FragmentActivity {
 	    mEnabledSensors.clear();
 	    
 	    //es. ABILITARE UN SENSORE
-	    mEnabledSensors.add(Sensor.ACCELEROMETER);
+	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
+	    //mEnabledSensors.add(FizzlySensor.GYROSCOPE);
 	    
 	    //se attivi il magnetometro richiama anche calibrateMagnetometer();
 	    //se attivi il barometro richiama anche calibrateHeight();
@@ -131,8 +134,7 @@ public class DeviceActivity extends FragmentActivity {
 	}
 
 	@Override 
-	protected void onResume()
-	{
+	protected void onResume() {
 	  	Log.d(TAG,"onResume");
 	    super.onResume();
 	    if (!mIsReceiving) {
@@ -164,7 +166,7 @@ public class DeviceActivity extends FragmentActivity {
 	    Log.d(TAG, "Gatt view ready");
 	
 	    // Set title bar to device name
-	    setTitle(mBluetoothDevice.getName());
+	    setTitle(mBtDevice.getName());
 	
 	    // Create GATT object
 	    mBtGatt = BluetoothLeService.getBtGatt();
@@ -178,10 +180,9 @@ public class DeviceActivity extends FragmentActivity {
 	    }
 	}
 
-	//
+
 	// Application implementation
 	//
-
 	BluetoothGattService getOadService() {
 		return mOadService;
 	}
@@ -230,72 +231,73 @@ public class DeviceActivity extends FragmentActivity {
 	  		mDeviceView.setStatus(txt);
 	}
 
-  private void enableSensors(boolean enable) {
-  	for (Sensor sensor : mEnabledSensors) {
-  		UUID servUuid = sensor.getService();
-  		UUID confUuid = sensor.getConfig();
-  		
-  		// Skip keys 
-  		if (confUuid == null)
-  			break;
-
-  		// Barometer calibration
-		if (confUuid.equals(SensorTag.UUID_BAR_CONF) && enable) {
-			calibrateBarometer();
-		}
-			
-  		BluetoothGattService serv = mBtGatt.getService(servUuid);
-  		BluetoothGattCharacteristic charac = serv.getCharacteristic(confUuid);
-  		byte value =  enable ? sensor.getEnableSensorCode() : Sensor.DISABLE_SENSOR_CODE;
-  		mBtLeService.writeCharacteristic(charac, value);
-			mBtLeService.waitIdle(GATT_TIMEOUT);
-			
-		if (confUuid.equals(SensorTag.UUID_ACC_CONF) && enable) {
-			charac = serv.getCharacteristic(SensorTag.UUID_ACC_PERI);
-	  		value = (byte) 2;
+	private void enableSensors(boolean enable) {
+	  	for (FizzlySensor sensor : mEnabledSensors) {
+	  		UUID servUuid = sensor.getService();
+	  		UUID confUuid = sensor.getConfig();
+	  		
+	  		// Skip keys 
+	  		if (confUuid == null)
+	  			break;
+	
+	  		// Barometer calibration
+			if (confUuid.equals(SensorTag.UUID_BAR_CONF) && enable) {
+				calibrateBarometer();
+			}
+				
+	  		BluetoothGattService serv = mBtGatt.getService(servUuid);
+	  		BluetoothGattCharacteristic charac = serv.getCharacteristic(confUuid);
+	  		byte value =  enable ? sensor.getEnableSensorCode() : Sensor.DISABLE_SENSOR_CODE;
 	  		mBtLeService.writeCharacteristic(charac, value);
-	  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " +value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
-		}	
-  	}
+			
+			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
+			if (confUuid.equals(Fizzly.UUID_ACC_CONF) && enable) {
+				charac = serv.getCharacteristic(Fizzly.UUID_ACC_PERI);
+		  		value = (byte) 2;
+		  		mBtLeService.writeCharacteristic(charac, value);
+		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " +value);
+					mBtLeService.waitIdle(GATT_TIMEOUT);
+			}	
+	  	}
   	
-  }
+	}
 
-  private void enableNotifications(boolean enable) {
-  	for (Sensor sensor : mEnabledSensors) {
-  		UUID servUuid = sensor.getService();
-  		UUID dataUuid = sensor.getData();
-  		BluetoothGattService serv = mBtGatt.getService(servUuid);
-  		BluetoothGattCharacteristic charac = serv.getCharacteristic(dataUuid);
-  		
-  		mBtLeService.setCharacteristicNotification(charac,enable);
-			mBtLeService.waitIdle(GATT_TIMEOUT);
-  	}
-  }
+	private void enableNotifications(boolean enable) {
+	  	for (FizzlySensor sensor : mEnabledSensors) {
+	  		UUID servUuid = sensor.getService();
+	  		UUID dataUuid = sensor.getData();
+	  		BluetoothGattService serv = mBtGatt.getService(servUuid);
+	  		BluetoothGattCharacteristic charac = serv.getCharacteristic(dataUuid);
+	  		
+	  		mBtLeService.setCharacteristicNotification(charac,enable);
+				mBtLeService.waitIdle(GATT_TIMEOUT);
+	  	}
+	}
   
-  /* Calibrating the barometer includes
-  * 
-  * 1. Write calibration code to configuration characteristic. 
-  * 2. Read calibration values from sensor, either with notifications or a normal read. 
-  * 3. Use calibration values in formulas when interpreting sensor values.
-  */
- private void calibrateBarometer() {
-	 Log.i(TAG, "calibrateBarometer");
-	 
-	 UUID servUuid = Sensor.BAROMETER.getService();
-	 UUID configUuid = Sensor.BAROMETER.getConfig();
-	 BluetoothGattService serv = mBtGatt.getService(servUuid);
-	 BluetoothGattCharacteristic config = serv.getCharacteristic(configUuid);
-
-	 // Write the calibration code to the configuration registers
-	 mBtLeService.writeCharacteristic(config,Sensor.CALIBRATE_SENSOR_CODE);
-	 mBtLeService.waitIdle(GATT_TIMEOUT);
-	 BluetoothGattCharacteristic calibrationCharacteristic = serv.getCharacteristic(SensorTag.UUID_BAR_CALI);
-	 mBtLeService.readCharacteristic(calibrationCharacteristic);
-	 mBtLeService.waitIdle(GATT_TIMEOUT);
- }
-
-	public void calibrateMagnetometer() {
+	  /* Calibrating the barometer includes
+	  * 
+	  * 1. Write calibration code to configuration characteristic. 
+	  * 2. Read calibration values from sensor, either with notifications or a normal read. 
+	  * 3. Use calibration values in formulas when interpreting sensor values.
+	  */
+	private void calibrateBarometer() {
+		 Log.i(TAG, "calibrateBarometer");
+		 
+		 UUID servUuid = Sensor.BAROMETER.getService();
+		 UUID configUuid = Sensor.BAROMETER.getConfig();
+		 BluetoothGattService serv = mBtGatt.getService(servUuid);
+		 BluetoothGattCharacteristic config = serv.getCharacteristic(configUuid);
+	
+		 // Write the calibration code to the configuration registers
+		 mBtLeService.writeCharacteristic(config,Sensor.CALIBRATE_SENSOR_CODE);
+		 mBtLeService.waitIdle(GATT_TIMEOUT);
+		 BluetoothGattCharacteristic calibrationCharacteristic = serv.getCharacteristic(SensorTag.UUID_BAR_CALI);
+		 mBtLeService.readCharacteristic(calibrationCharacteristic);
+		 mBtLeService.waitIdle(GATT_TIMEOUT);
+	 }
+	
+ 	public void calibrateMagnetometer() {
 		Log.d(TAG,"calibrateMagnetometer");
 		MagnetometerCalibrationCoefficients.INSTANCE.val.x = 0.0;
 		MagnetometerCalibrationCoefficients.INSTANCE.val.y = 0.0;
@@ -303,49 +305,53 @@ public class DeviceActivity extends FragmentActivity {
 
 		mMagCalibrateRequest = true;
 	}
+ 	
+ 	
 	
 	public void calibrateHeight() {
 		mHeightCalibrateRequest = true;		
 	}
 
-  private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
-  	@Override
-  	public void onReceive(Context context, Intent intent) {
-  		final String action = intent.getAction();
-  		int status = intent.getIntExtra(BluetoothLeService.EXTRA_STATUS, BluetoothGatt.GATT_SUCCESS);
-
-  		if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-  			if (status == BluetoothGatt.GATT_SUCCESS) {
-  				displayServices();
-  			} else {
-  				Toast.makeText(getApplication(), "Service discovery failed", Toast.LENGTH_LONG).show();
-  				return;
-  			}
-  		} else if (BluetoothLeService.ACTION_DATA_NOTIFY.equals(action)) {
-  			// Notification
-  			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
-  			onCharacteristicChanged(uuidStr, value);
-  		} else if (BluetoothLeService.ACTION_DATA_WRITE.equals(action)) {
-  			// Data written
-  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
-  			onCharacteristicWrite(uuidStr,status);
-  		} else if (BluetoothLeService.ACTION_DATA_READ.equals(action)) {
-  			// Data read
-  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
-  			byte  [] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-  			onCharacteristicsRead(uuidStr,value,status);
-  		}
-
-  		if (status != BluetoothGatt.GATT_SUCCESS) {
-  			setError("GATT error code: " + status);
-  		}
-  	}
-  };
+	
+	
+	private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+	  	@Override
+	  	public void onReceive(Context context, Intent intent) {
+	  		final String action = intent.getAction();
+	  		int status = intent.getIntExtra(BluetoothLeService.EXTRA_STATUS, BluetoothGatt.GATT_SUCCESS);
+	
+	  		if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+	  			if (status == BluetoothGatt.GATT_SUCCESS) {
+	  				displayServices();
+	  			} else {
+	  				Toast.makeText(getApplication(), "Service discovery failed", Toast.LENGTH_LONG).show();
+	  				return;
+	  			}
+	  		} else if (BluetoothLeService.ACTION_DATA_NOTIFY.equals(action)) {
+	  			// Notification
+	  			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
+	  			onCharacteristicChanged(uuidStr, value);
+	  		} else if (BluetoothLeService.ACTION_DATA_WRITE.equals(action)) {
+	  			// Data written
+	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
+	  			onCharacteristicWrite(uuidStr,status);
+	  		} else if (BluetoothLeService.ACTION_DATA_READ.equals(action)) {
+	  			// Data read
+	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
+	  			byte  [] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+	  			onCharacteristicsRead(uuidStr,value,status);
+	  		}
+	
+	  		if (status != BluetoothGatt.GATT_SUCCESS) {
+	  			setError("GATT error code: " + status);
+	  		}
+	  	}
+	};
 
 	private void onCharacteristicWrite(String uuidStr, int status) {
 	  Log.d(TAG,"onCharacteristicWrite: " + uuidStr);
-  }
+	}
 
 	private void onCharacteristicChanged(String uuidStr, byte[] value) {
 		if (mDeviceView != null) {

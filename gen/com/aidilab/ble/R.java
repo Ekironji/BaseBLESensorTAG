@@ -33,15 +33,17 @@ public final class R {
     }
     public static final class id {
         public static final int acc_textView=0x7f0a0003;
-        public static final int action_settings=0x7f0a0008;
-        public static final int btn_scan=0x7f0a0007;
+        public static final int action_settings=0x7f0a000a;
+        public static final int btn_scan=0x7f0a0009;
         public static final int container=0x7f0a0000;
         public static final int descr=0x7f0a0001;
-        public static final int device_list=0x7f0a0004;
-        public static final int no_device=0x7f0a0006;
-        public static final int opt_bt=0x7f0a0009;
-        public static final int opt_exit=0x7f0a000a;
-        public static final int pb_busy=0x7f0a0005;
+        public static final int device_list=0x7f0a0006;
+        public static final int gyr_textView=0x7f0a0005;
+        public static final int mag_textView=0x7f0a0004;
+        public static final int no_device=0x7f0a0008;
+        public static final int opt_bt=0x7f0a000b;
+        public static final int opt_exit=0x7f0a000c;
+        public static final int pb_busy=0x7f0a0007;
         public static final int status=0x7f0a0002;
     }
     public static final class layout {

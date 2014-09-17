@@ -60,23 +60,23 @@ import android.util.Log;
 public class BluetoothLeService extends Service {
   static final String TAG = "BluetoothLeService";
 
-  public final static String ACTION_GATT_CONNECTED ="com.aidilab.ble.common.ACTION_GATT_CONNECTED";
-  public final static String ACTION_GATT_DISCONNECTED = "com.aidilab.ble.ACTION_GATT_DISCONNECTED";
+  public final static String ACTION_GATT_CONNECTED           = "com.aidilab.ble.common.ACTION_GATT_CONNECTED";
+  public final static String ACTION_GATT_DISCONNECTED        = "com.aidilab.ble.ACTION_GATT_DISCONNECTED";
   public final static String ACTION_GATT_SERVICES_DISCOVERED = "com.aidilab.ble.common.ACTION_GATT_SERVICES_DISCOVERED";
-  public final static String ACTION_DATA_READ = "com.aidilab.ble.common.ACTION_DATA_READ";
-  public final static String ACTION_DATA_NOTIFY = "com.aidilab.ble.common.ACTION_DATA_NOTIFY";
-  public final static String ACTION_DATA_WRITE = "com.aidilab.ble.common.ACTION_DATA_WRITE";
-  public final static String EXTRA_DATA = "com.aidilab.ble.common.EXTRA_DATA";
-  public final static String EXTRA_UUID = "com.aidilab.ble.common.EXTRA_UUID";
-  public final static String EXTRA_STATUS = "com.aidilab.ble.common.EXTRA_STATUS";
-  public final static String EXTRA_ADDRESS = "com.aidilab.ble.common.EXTRA_ADDRESS";
+  public final static String ACTION_DATA_READ                = "com.aidilab.ble.common.ACTION_DATA_READ";
+  public final static String ACTION_DATA_NOTIFY              = "com.aidilab.ble.common.ACTION_DATA_NOTIFY";
+  public final static String ACTION_DATA_WRITE               = "com.aidilab.ble.common.ACTION_DATA_WRITE";
+  public final static String EXTRA_DATA                      = "com.aidilab.ble.common.EXTRA_DATA";
+  public final static String EXTRA_UUID                      = "com.aidilab.ble.common.EXTRA_UUID";
+  public final static String EXTRA_STATUS                    = "com.aidilab.ble.common.EXTRA_STATUS";
+  public final static String EXTRA_ADDRESS                   = "com.aidilab.ble.common.EXTRA_ADDRESS";
 
   // BLE
   private BluetoothManager mBluetoothManager = null;
-  private BluetoothAdapter mBtAdapter = null;
-  private BluetoothGatt mBluetoothGatt = null;
-  private static BluetoothLeService mThis = null;
-  private volatile boolean mBusy = false; // Write/read pending response
+  private BluetoothAdapter mBtAdapter        = null;
+  private BluetoothGatt mBluetoothGatt       = null;
+  private static BluetoothLeService mThis    = null;
+  private volatile boolean mBusy             = false; // Write/read pending response
   private String mBluetoothDeviceAddress;
 
   /**
@@ -282,6 +282,9 @@ public class BluetoothLeService extends Service {
     return mBluetoothGatt.writeCharacteristic(characteristic);
   }
 
+  
+  
+  
   public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic, boolean b) {
   	if (!checkGatt())
   		return false;
@@ -293,6 +296,8 @@ public class BluetoothLeService extends Service {
     mBusy = true;
     return mBluetoothGatt.writeCharacteristic(characteristic);
   }
+  
+  
 
   public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
   	if (!checkGatt())
@@ -302,6 +307,9 @@ public class BluetoothLeService extends Service {
     return mBluetoothGatt.writeCharacteristic(characteristic);
   }
 
+  
+  
+  
   /**
    * Retrieves the number of GATT services on the connected device. This should be invoked only after {@code BluetoothGatt#discoverServices()} completes
    * successfully.
@@ -315,6 +323,10 @@ public class BluetoothLeService extends Service {
     return mBluetoothGatt.getServices().size();
   }
 
+  
+  
+  
+  
   /**
    * Retrieves a list of supported GATT services on the connected device. This should be invoked only after {@code BluetoothGatt#discoverServices()} completes
    * successfully.
@@ -328,6 +340,10 @@ public class BluetoothLeService extends Service {
     return mBluetoothGatt.getServices();
   }
 
+  
+  
+  
+  
   /**
    * Enables or disables notification on a give characteristic.
    * 
@@ -361,6 +377,10 @@ public class BluetoothLeService extends Service {
     return mBluetoothGatt.writeDescriptor(clientConfig);
   }
 
+  
+  
+  
+  
   public boolean isNotificationEnabled(BluetoothGattCharacteristic characteristic) {
   	if (!checkGatt())
   		return false;
@@ -372,6 +392,10 @@ public class BluetoothLeService extends Service {
     return clientConfig.getValue() == BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE;
   }
 
+  
+  
+  
+  
   /**
    * Connects to the GATT server hosted on the Bluetooth LE device.
    * 
@@ -418,6 +442,11 @@ public class BluetoothLeService extends Service {
     return true;
   }
 
+  
+  
+  
+  
+  
   /**
    * Disconnects an existing connection or cancel a pending connection. The disconnection result is reported asynchronously through the
    * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)} callback.
@@ -440,6 +469,11 @@ public class BluetoothLeService extends Service {
     }
   }
 
+  
+  
+  
+  
+  
   /**
    * After using a given BLE device, the app must call this method to ensure resources are released properly.
    */
@@ -462,6 +496,9 @@ public class BluetoothLeService extends Service {
     return n;
   }
 
+  
+  
+  
   //
   // Utility functions
   //

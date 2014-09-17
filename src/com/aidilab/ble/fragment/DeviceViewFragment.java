@@ -70,6 +70,8 @@ public class DeviceViewFragment extends Fragment {
 	// GUI
 	private TextView mStatus;
 	private TextView mAcc;
+	private TextView mMag;
+	private TextView mGyr;
 
 	// House-keeping
 	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
@@ -88,6 +90,8 @@ public class DeviceViewFragment extends Fragment {
 	    	    
 	    mStatus = (TextView) view.findViewById(R.id.status);
 	    mAcc = (TextView) view.findViewById(R.id.acc_textView);
+	    mAcc = (TextView) view.findViewById(R.id.mag_textView);
+	    mAcc = (TextView) view.findViewById(R.id.gyr_textView);
 	    
 	    // Notify activity that UI has been inflated
 	    mActivity.onViewInflated(view);
@@ -123,13 +127,13 @@ public class DeviceViewFragment extends Fragment {
   	if (uuidStr.equals(UUID_MAG_DATA.toString())) {
   		v = Sensor.MAGNETOMETER.convert(rawValue);
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
-  		//mMagValue.setText(msg);
+  		mMag.setText(msg);
   	} 
 
   	if (uuidStr.equals(UUID_GYR_DATA.toString())) {
   		v = Sensor.GYROSCOPE.convert(rawValue);
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
-  		//mGyrValue.setText(msg);
+  		mGyr.setText(msg);
   	} 
 
   	if (uuidStr.equals(UUID_IRT_DATA.toString())) {

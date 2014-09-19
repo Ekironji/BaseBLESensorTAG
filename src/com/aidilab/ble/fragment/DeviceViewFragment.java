@@ -35,33 +35,35 @@
 package com.aidilab.ble.fragment;
 
 
-import static com.aidilab.ble.sensor.SensorTag.UUID_ACC_DATA;
-import static com.aidilab.ble.sensor.SensorTag.UUID_BAR_DATA;
-import static com.aidilab.ble.sensor.SensorTag.UUID_GYR_DATA;
-import static com.aidilab.ble.sensor.SensorTag.UUID_HUM_DATA;
-import static com.aidilab.ble.sensor.SensorTag.UUID_IRT_DATA;
-import static com.aidilab.ble.sensor.SensorTag.UUID_KEY_DATA;
-import static com.aidilab.ble.sensor.SensorTag.UUID_MAG_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
 
 import java.text.DecimalFormat;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.aidilab.ble.DeviceActivity;
 import com.aidilab.ble.R;
-import com.aidilab.ble.sensor.Sensor;
-import com.aidilab.ble.utils.BarometerCalibrationCoefficients;
+import com.aidilab.ble.sensor.FizzlySensor;
+import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
+import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SimpleKeysStatus;
 
 // Fragment for Device View
-public class DeviceViewFragment extends Fragment {
+public class DeviceViewFragment extends Fragment implements OnClickListener{
 	
 	private static final String TAG = "DeviceViewFragment";
 	
@@ -72,6 +74,15 @@ public class DeviceViewFragment extends Fragment {
 	private TextView mAcc;
 	private TextView mMag;
 	private TextView mGyr;
+	private ImageButton mRgbButton;
+	private ImageButton mPlayRgbButton;
+	
+	private ImageButton mHighToneButton;
+	private ImageButton mLowToneButton;
+	
+	private EditText mRgbPeriodEditText;
+	private EditText mBeepPeriodEditText;
+	private EditText mBeepNumberEditText;
 
 	// House-keeping
 	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
@@ -90,8 +101,22 @@ public class DeviceViewFragment extends Fragment {
 	    	    
 	    mStatus = (TextView) view.findViewById(R.id.status);
 	    mAcc = (TextView) view.findViewById(R.id.acc_textView);
-	    mAcc = (TextView) view.findViewById(R.id.mag_textView);
-	    mAcc = (TextView) view.findViewById(R.id.gyr_textView);
+	    mMag = (TextView) view.findViewById(R.id.mag_textView);
+	    mGyr = (TextView) view.findViewById(R.id.gyr_textView);
+	    mRgbButton = (ImageButton) view.findViewById(R.id.rgbButton);
+	    mPlayRgbButton = (ImageButton) view.findViewById(R.id.playRgbButton);
+	    
+	    mHighToneButton = (ImageButton) view.findViewById(R.id.highToneButton);
+	    mLowToneButton = (ImageButton) view.findViewById(R.id.lowToneButton);
+	    
+	    mRgbPeriodEditText = (EditText) view.findViewById(R.id.rgbPeriodEditText);
+	    mBeepNumberEditText = (EditText) view.findViewById(R.id.beepNumberEditText);
+	    mBeepPeriodEditText = (EditText) view.findViewById(R.id.beepPeriodrEditText);
+	    
+	    mRgbButton.setOnClickListener(this);
+	    mPlayRgbButton.setOnClickListener(this);
+	    mHighToneButton.setOnClickListener(this);
+	    mLowToneButton.setOnClickListener(this);
 	    
 	    // Notify activity that UI has been inflated
 	    mActivity.onViewInflated(view);
@@ -119,51 +144,26 @@ public class DeviceViewFragment extends Fragment {
 		String msg;
 
   	if (uuidStr.equals(UUID_ACC_DATA.toString())) {
-  		v = Sensor.ACCELEROMETER.convert(rawValue);
+  		v = FizzlySensor.ACCELEROMETER.convert(rawValue);
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
   		mAcc.setText(msg);
   	} 
   
   	if (uuidStr.equals(UUID_MAG_DATA.toString())) {
-  		v = Sensor.MAGNETOMETER.convert(rawValue);
+  		v = FizzlySensor.MAGNETOMETER.convert(rawValue);
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
   		mMag.setText(msg);
   	} 
 
   	if (uuidStr.equals(UUID_GYR_DATA.toString())) {
-  		v = Sensor.GYROSCOPE.convert(rawValue);
+  		v = FizzlySensor.GYROSCOPE.convert(rawValue);
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
   		mGyr.setText(msg);
   	} 
 
-  	if (uuidStr.equals(UUID_IRT_DATA.toString())) {
-  		v = Sensor.IR_TEMPERATURE.convert(rawValue);
-  		// temperatura ambiente
-  		msg = decimal.format(v.x) + "\n";
-  		//mAmbValue.setText(msg); 
-  		
-  		// temperatura oggetto
-  		msg = decimal.format(v.y) + "\n";
-  		//mObjValue.setText(msg);
-  	}
-  	
-  	if (uuidStr.equals(UUID_HUM_DATA.toString())) {
-  		v = Sensor.HUMIDITY.convert(rawValue);
-  		msg = decimal.format(v.x) + "\n";
-  		//mHumValue.setText(msg);
-  	}
-
-  	if (uuidStr.equals(UUID_BAR_DATA.toString())) {
-  		v = Sensor.BAROMETER.convert(rawValue);
-  		double h = (v.x - BarometerCalibrationCoefficients.INSTANCE.heightCalibration) / PA_PER_METER;
-  		h = (double)Math.round(-h * 10.0) / 10.0;
-  		msg = decimal.format(v.x/100) + "\n" + h;
-  		//mBarValue.setText(msg);
-  	}
-
   	if (uuidStr.equals(UUID_KEY_DATA.toString())) {
   		SimpleKeysStatus s;
-  		s = Sensor.SIMPLE_KEYS.convertKeys(rawValue);
+  		s = FizzlySensor.SIMPLE_KEYS.convertKeys(rawValue);
   		
   		switch (s) {
   		case OFF_OFF:
@@ -184,6 +184,7 @@ public class DeviceViewFragment extends Fragment {
   	}
   }
 
+  
   public void setStatus(String txt) {
   	mStatus.setText(txt);
   	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Success);
@@ -201,4 +202,39 @@ public class DeviceViewFragment extends Fragment {
   		mStatus.setTextAppearance(mActivity, R.style.statusStyle);  		
   }
 
+  
+  
+  private int lastColorSelected = Color.GREEN;
+  
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()){
+		case R.id.rgbButton:
+			HSVColorPickerDialog cpd = new HSVColorPickerDialog(mActivity, lastColorSelected, new OnColorSelectedListener() {
+			    @Override
+			    public void colorSelected(Integer color) {
+			    	lastColorSelected = color;
+					Log.i("ScanViewFragmanet.onClick()", "rgb " + lastColorSelected);
+					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
+			    }
+			});
+			cpd.setTitle( "Pick a color" );
+			cpd.show();			
+			break;
+		case R.id.playRgbButton:
+			mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
+			break;
+		case R.id.highToneButton:
+			Log.i("ScanViewFragmanet.onClick()", "high");
+			break;
+		case R.id.lowToneButton:
+			Log.i("ScanViewFragmanet.onClick()", "low");
+			break;
+		default:
+			break;
+		}
+	}
+
+  
+  
 }

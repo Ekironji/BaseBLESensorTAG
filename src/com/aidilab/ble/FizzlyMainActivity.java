@@ -31,7 +31,7 @@ import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.fragment.ScanViewFragment;
 import com.aidilab.ble.sensor.BluetoothLeService;
 
-public class MainActivity extends FragmentActivity {
+public class FizzlyMainActivity extends FragmentActivity {
 	// Log
 	private static final String TAG = "MainActivity";
 	  
@@ -56,12 +56,12 @@ public class MainActivity extends FragmentActivity {
 	private static final int REQ_DEVICE_ACT = 1;
 
 	// GUI
-	private static MainActivity mThis = null;
+	private static FizzlyMainActivity mThis = null;
 	public ScanViewFragment mScanView;
 	private Intent mDeviceIntent;
 	private static final int STATUS_DURATION = 5;
 	
-	public MainActivity() {
+	public FizzlyMainActivity() {
 		  Log.i(TAG, "Construct");
 		  mThis = this;
 	}

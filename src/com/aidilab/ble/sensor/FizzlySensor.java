@@ -35,19 +35,26 @@
 package com.aidilab.ble.sensor;
 
 //import static android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT8;
-import static com.aidilab.ble.sensor.SensorTag.*;
-import static java.lang.Math.pow;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_SERV;
 
-import java.util.List;
 import java.util.UUID;
-
-import com.aidilab.ble.utils.BarometerCalibrationCoefficients;
-import com.aidilab.ble.utils.MagnetometerCalibrationCoefficients;
-import com.aidilab.ble.utils.Point3D;
-import com.aidilab.ble.utils.SimpleKeysStatus;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
+
+import com.aidilab.ble.utils.MagnetometerCalibrationCoefficients;
+import com.aidilab.ble.utils.Point3D;
+import com.aidilab.ble.utils.SimpleKeysStatus;
 
 
 /**
@@ -70,9 +77,13 @@ public enum FizzlySensor {
   		 * The z value is multiplied with -1 to coincide with how we have arbitrarily defined the positive y direction. (illustrated by the apps accelerometer
   		 * image)
   		 */
-  		Integer x = (int) value[0];
-  		Integer y = (int) value[2];
-  		Integer z = (int) value[4] * -1;
+  		
+  		// Log.i("FizzlySensor.ACCELEROMETER.convert()", "dimensione value acc " + value.length);
+  		
+  		
+  		float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 100;
+  		float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 100;
+  		float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 100;
 
   		return new Point3D(x , y , z );
   	}
@@ -84,11 +95,13 @@ public enum FizzlySensor {
     public Point3D convert(final byte [] value) {
       Point3D mcal = MagnetometerCalibrationCoefficients.INSTANCE.val;
       // Multiply x and y with -1 so that the values correspond with the image in the app
-      float x = shortSignedAtOffset(value, 0) * (2000f / 65536f) * -1;
-      float y = shortSignedAtOffset(value, 2) * (2000f / 65536f) * -1;
-      float z = shortSignedAtOffset(value, 4) * (2000f / 65536f);
+      float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 100;
+	  float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 100;
+	  float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 100;
       
-			return new Point3D(x - mcal.x, y - mcal.y, z - mcal.z);
+      //Log.i("FizzlySensor.MAGNETOMETER.convert()", "dimensione value mag " + value.length);
+      
+	  return new Point3D(x , y , z);
     }
   },
 

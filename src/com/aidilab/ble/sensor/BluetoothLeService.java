@@ -282,6 +282,16 @@ public class BluetoothLeService extends Service {
     return mBluetoothGatt.writeCharacteristic(characteristic);
   }
 
+  public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic, byte[] b) {
+	  	if (!checkGatt())
+	  		return false;
+	  	
+	    characteristic.setValue(b);
+
+	    mBusy = true;
+	    return mBluetoothGatt.writeCharacteristic(characteristic);
+  }
+  
   
   
   

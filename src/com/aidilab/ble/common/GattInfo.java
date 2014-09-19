@@ -46,12 +46,13 @@ import android.content.res.XmlResourceParser;
 
 public class GattInfo {
   // Bluetooth SIG identifiers
-  public static final UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-  private static final String uuidBtSigBase                             = "0000****-0000-1000-8000-00805f9b34fb";
-  private static final String uuidTiBase                                = "f000****-0451-4000-b000-000000000000";
+  public static final UUID CLIENT_CHARACTERISTIC_CONFIG     = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+  private static final String uuidBtSigBase                                 = "0000****-0000-1000-8000-00805f9b34fb";
+  private static final String uuidTiBase                                    = "f000****-0451-4000-b000-000000000000";
+  private static final String uuidFizzlyBase                                = "f000****-0451-4000-b000-5ec0a1d1cb00";
 
   public static final UUID OAD_SERVICE_UUID = UUID.fromString("f000ffc0-0451-4000-b000-000000000000");
-  public static final UUID CC_SERVICE_UUID  = UUID.fromString("f000ccc0-0451-4000-b000-000000000000");
+  public static final UUID CC_SERVICE_UUID  = UUID.fromString("f000ccc0-0451-4000-cb00-000000000000");
 
   private static Map<String, String> mNameMap  = new HashMap<String, String>();
   private static Map<String, String> mDescrMap = new HashMap<String, String>();
@@ -83,6 +84,14 @@ public class GattInfo {
     us = us.replace(r, "****");
     return us.equals(uuidTiBase);
   }
+  
+  
+  static public boolean isFizzlyUuid(UUID u) {
+	    String us = u.toString();
+	    String r = toShortUuidStr(u);
+	    us = us.replace(r, "****");
+	    return us.equals(uuidFizzlyBase);
+	  }
 
   static public boolean isBtSigUuid(UUID u) {
     String us = u.toString();

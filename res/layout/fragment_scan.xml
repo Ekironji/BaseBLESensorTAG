@@ -2,13 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
     android:clickable="false"
     android:gravity="bottom"
     android:longClickable="false"
     android:orientation="vertical"
     android:padding="0dp"
-    tools:context=".MainActivity" >
+    tools:context=".FizzlyMainActivity"
+    android:background="@drawable/fizz_bg" >
 
     <ListView
         android:id="@+id/device_list"

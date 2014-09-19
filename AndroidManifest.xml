@@ -25,7 +25,7 @@
             android:enabled="true" />
         
         <activity
-            android:name="com.aidilab.ble.MainActivity"
+            android:name="com.aidilab.ble.FizzlyMainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>

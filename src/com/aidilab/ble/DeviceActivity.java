@@ -48,6 +48,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -60,15 +61,12 @@ import com.aidilab.ble.fragment.DeviceViewFragment;
 import com.aidilab.ble.sensor.BluetoothLeService;
 import com.aidilab.ble.sensor.Fizzly;
 import com.aidilab.ble.sensor.FizzlySensor;
-import com.aidilab.ble.sensor.Sensor;
-import com.aidilab.ble.sensor.SensorTag;
-import com.aidilab.ble.utils.BarometerCalibrationCoefficients;
-import com.aidilab.ble.utils.MagnetometerCalibrationCoefficients;
-import com.aidilab.ble.utils.Point3D;
 
 public class DeviceActivity extends FragmentActivity {
 	// Log
 	private static String TAG = "DeviceActivity";
+    final byte CHANGE_COLOR = 0x00;
+    final byte BLINK 		= 0x01;
 
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
@@ -121,8 +119,9 @@ public class DeviceActivity extends FragmentActivity {
 	    mEnabledSensors.clear();
 	    
 	    //es. ABILITARE UN SENSORE
+	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);
 	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
-	    //mEnabledSensors.add(FizzlySensor.GYROSCOPE);
+	    // mEnabledSensors.add(FizzlySensor.GYROSCOPE);
 	    
 	    //se attivi il magnetometro richiama anche calibrateMagnetometer();
 	    //se attivi il barometro richiama anche calibrateHeight();
@@ -240,25 +239,37 @@ public class DeviceActivity extends FragmentActivity {
 	  		if (confUuid == null)
 	  			break;
 	
-	  		// Barometer calibration
-			if (confUuid.equals(SensorTag.UUID_BAR_CONF) && enable) {
-				calibrateBarometer();
-			}
-				
-	  		BluetoothGattService serv = mBtGatt.getService(servUuid);
-	  		BluetoothGattCharacteristic charac = serv.getCharacteristic(confUuid);
-	  		byte value =  enable ? sensor.getEnableSensorCode() : Sensor.DISABLE_SENSOR_CODE;
-	  		mBtLeService.writeCharacteristic(charac, value);
+	  		BluetoothGattService serv = null;
+	  		BluetoothGattCharacteristic charac = null;
+	  		
+	  		byte value;
+	  		try {
+				serv = mBtGatt.getService(servUuid);
+				charac = serv.getCharacteristic(confUuid);
+				value = enable ? sensor.getEnableSensorCode()
+						: FizzlySensor.DISABLE_SENSOR_CODE;
+				mBtLeService.writeCharacteristic(charac, value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
-			
+			} catch (Exception e) {
+				Log.e("DeviceActivity.enableSensors()","service uuid: " + servUuid.toString());
+			}
 			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ACC_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ACC_PERI);
-		  		value = (byte) 2;
+		  		value = (byte) 1;
 		  		mBtLeService.writeCharacteristic(charac, value);
-		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " +value);
-					mBtLeService.waitIdle(GATT_TIMEOUT);
+		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " + value);
+				mBtLeService.waitIdle(GATT_TIMEOUT);
 			}	
+			
+			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
+			if (confUuid.equals(Fizzly.UUID_MAG_CONF) && enable) {
+				charac = serv.getCharacteristic(Fizzly.UUID_MAG_PERI);
+		  		value = (byte) 1;
+		  		mBtLeService.writeCharacteristic(charac, value);
+		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell magnetometro : " + value);
+				mBtLeService.waitIdle(GATT_TIMEOUT);
+			}
 	  	}
   	
 	}
@@ -268,45 +279,15 @@ public class DeviceActivity extends FragmentActivity {
 	  		UUID servUuid = sensor.getService();
 	  		UUID dataUuid = sensor.getData();
 	  		BluetoothGattService serv = mBtGatt.getService(servUuid);
+	  		
+	  		Log.i(TAG, "service "+ servUuid.toString() + " is null: " + (serv == null) );
+	  		
 	  		BluetoothGattCharacteristic charac = serv.getCharacteristic(dataUuid);
 	  		
 	  		mBtLeService.setCharacteristicNotification(charac,enable);
-				mBtLeService.waitIdle(GATT_TIMEOUT);
+			mBtLeService.waitIdle(GATT_TIMEOUT);
 	  	}
-	}
-  
-	  /* Calibrating the barometer includes
-	  * 
-	  * 1. Write calibration code to configuration characteristic. 
-	  * 2. Read calibration values from sensor, either with notifications or a normal read. 
-	  * 3. Use calibration values in formulas when interpreting sensor values.
-	  */
-	private void calibrateBarometer() {
-		 Log.i(TAG, "calibrateBarometer");
-		 
-		 UUID servUuid = Sensor.BAROMETER.getService();
-		 UUID configUuid = Sensor.BAROMETER.getConfig();
-		 BluetoothGattService serv = mBtGatt.getService(servUuid);
-		 BluetoothGattCharacteristic config = serv.getCharacteristic(configUuid);
-	
-		 // Write the calibration code to the configuration registers
-		 mBtLeService.writeCharacteristic(config,Sensor.CALIBRATE_SENSOR_CODE);
-		 mBtLeService.waitIdle(GATT_TIMEOUT);
-		 BluetoothGattCharacteristic calibrationCharacteristic = serv.getCharacteristic(SensorTag.UUID_BAR_CALI);
-		 mBtLeService.readCharacteristic(calibrationCharacteristic);
-		 mBtLeService.waitIdle(GATT_TIMEOUT);
-	 }
-	
- 	public void calibrateMagnetometer() {
-		Log.d(TAG,"calibrateMagnetometer");
-		MagnetometerCalibrationCoefficients.INSTANCE.val.x = 0.0;
-		MagnetometerCalibrationCoefficients.INSTANCE.val.y = 0.0;
-		MagnetometerCalibrationCoefficients.INSTANCE.val.z = 0.0;
-
-		mMagCalibrateRequest = true;
-	}
- 	
- 	
+	} 	
 	
 	public void calibrateHeight() {
 		mHeightCalibrateRequest = true;		
@@ -355,52 +336,34 @@ public class DeviceActivity extends FragmentActivity {
 
 	private void onCharacteristicChanged(String uuidStr, byte[] value) {
 		if (mDeviceView != null) {
-			if (mMagCalibrateRequest) {
-				if (uuidStr.equals(SensorTag.UUID_MAG_DATA.toString())) {
-					Point3D v = Sensor.MAGNETOMETER.convert(value);
-
-					MagnetometerCalibrationCoefficients.INSTANCE.val = v;
-					mMagCalibrateRequest = false;
-					Toast.makeText(this, "Magnetometer calibrated", Toast.LENGTH_SHORT)
-					    .show();
-				}
-			}
-
-			if (mHeightCalibrateRequest) {
-				if (uuidStr.equals(SensorTag.UUID_BAR_DATA.toString())) {
-					Point3D v = Sensor.BAROMETER.convert(value);
-
-					BarometerCalibrationCoefficients.INSTANCE.heightCalibration = v.x;
-					mHeightCalibrateRequest = false;
-					Toast.makeText(this, "Height measurement calibrated", Toast.LENGTH_SHORT)
-					    .show();
-				}
-			}
-
 			mDeviceView.onCharacteristicChanged(uuidStr, value);
 		}
 	}
 
 	private void onCharacteristicsRead(String uuidStr, byte [] value, int status) {
-		Log.i(TAG, "onCharacteristicsRead: " + uuidStr);
-		if (uuidStr.equals(SensorTag.UUID_BAR_CALI.toString())) {
-			Log.i(TAG, "CALIBRATED");
-			// Barometer calibration values are read.
-			List<Integer> cal = new ArrayList<Integer>();
-			for (int offset = 0; offset < 8; offset += 2) {
-				Integer lowerByte = (int) value[offset] & 0xFF; 
-				Integer upperByte = (int) value[offset +1] & 0xFF;
-				cal.add((upperByte << 8) + lowerByte);
-			}
+		Log.i(TAG, "onCharacteristicsRead: " + uuidStr);		
+	}
 
-			for (int offset = 8; offset < 16; offset += 2) {
-				Integer lowerByte = (int) value[offset] & 0xFF; 
-				Integer upperByte = (int) value[offset +1]; 
-				cal.add((upperByte << 8) + lowerByte);
-			}
+	
+	// Action methods
+	public void playColor(int millis, int color){
+  		BluetoothGattService serv = null;
+  		BluetoothGattCharacteristic charac = null;
+		
 
-			BarometerCalibrationCoefficients.INSTANCE.barometerCalibrationCoefficients = cal;
-		}
+  		serv = mBtGatt.getService(Fizzly.UUID_LED_SERV);
+		charac = serv.getCharacteristic(Fizzly.UUID_LED_CMND);
+		byte[] msg = new byte[6];
+        msg[0] = (byte)CHANGE_COLOR;
+        msg[1] = (byte)Color.red(color);
+    	msg[2] = (byte)Color.green(color);
+    	msg[3] = (byte)Color.blue(color);
+    	msg[4] = (byte)(millis/10);
+    	msg[5] = (byte)0x00;
+  		mBtLeService.writeCharacteristic(charac, msg);
+  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell magnetometro : " + msg);
+		mBtLeService.waitIdle(GATT_TIMEOUT);
+		
 	}
 
 }

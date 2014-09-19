@@ -52,7 +52,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.aidilab.ble.MainActivity;
+import com.aidilab.ble.FizzlyMainActivity;
 import com.aidilab.ble.R;
 import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.utils.CustomTimer;
@@ -62,7 +62,7 @@ public class ScanViewFragment extends Fragment {
   private static final String TAG = "ScanViewFragment";
   private final int SCAN_TIMEOUT = 10; // Seconds
   private final int CONNECT_TIMEOUT = 10; // Seconds
-  private MainActivity mActivity = null;
+  private FizzlyMainActivity mActivity = null;
 
   private DeviceListAdapter mDeviceAdapter = null;
   private TextView mEmptyMsg;
@@ -83,7 +83,7 @@ public class ScanViewFragment extends Fragment {
     // The last two arguments ensure LayoutParams are inflated properly.
     View view = inflater.inflate(R.layout.fragment_scan, container, false);
 
-    mActivity = (MainActivity) getActivity();
+    mActivity = (FizzlyMainActivity) getActivity();
     mContext = mActivity.getApplicationContext();
 
     // Initialize widgets
@@ -271,5 +271,6 @@ public class ScanViewFragment extends Fragment {
       return vg;
     }
   }
+
 
 }

@@ -32,6 +32,7 @@
         <item>FizzlyTag</item>      
     </string-array>
         
+    <string name="empty1">*\n</string>
     <string name="empty3">*\n*\n*\n</string>
 
 </resources>

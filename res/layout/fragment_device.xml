@@ -17,6 +17,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Battery"
+        android:textSize="12sp"/>       
+    <TextView
+        android:id="@+id/bat_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/empty1"/>
+    
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Accelerometer"
         android:textSize="12sp"/>       
     <TextView
@@ -83,14 +95,25 @@
 
             <requestFocus />
         </EditText>
-
-        <ImageButton
-            android:id="@+id/playRgbButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_send" />
-
     </LinearLayout>
+    
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capacitive Button"
+        android:textSize="12sp"/>       
+    <TextView
+        android:id="@+id/but_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/empty1"/>
+    
+    
+    
+    
+    
+    
     
     <TextView
         android:layout_width="wrap_content"
@@ -98,6 +121,7 @@
         android:text="Beeper"
         android:textSize="12dip"/>
 
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >

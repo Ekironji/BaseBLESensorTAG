@@ -35,26 +35,14 @@
 package com.aidilab.ble.sensor;
 
 //import static android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT8;
-import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_CONF;
-import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_SERV;
-import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_CONF;
-import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_SERV;
-import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_SERV;
-import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_CONF;
-import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_SERV;
+import static com.aidilab.ble.sensor.Fizzly.*;
 
 import java.util.UUID;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
-import com.aidilab.ble.utils.MagnetometerCalibrationCoefficients;
 import com.aidilab.ble.utils.Point3D;
-import com.aidilab.ble.utils.SimpleKeysStatus;
 
 
 /**
@@ -62,25 +50,10 @@ import com.aidilab.ble.utils.SimpleKeysStatus;
  * characteristic-containing-measurement.
  */
 public enum FizzlySensor {
-  
 
   ACCELEROMETER(UUID_ACC_SERV, UUID_ACC_DATA, UUID_ACC_CONF) {
   	@Override
-  	public Point3D convert(final byte[] value) {
-  		/*
-  		 * The accelerometer has the range [-2g, 2g] with unit (1/64)g.
-  		 * 
-  		 * To convert from unit (1/64)g to unit g we divide by 64.
-  		 * 
-  		 * (g = 9.81 m/s^2)
-  		 * 
-  		 * The z value is multiplied with -1 to coincide with how we have arbitrarily defined the positive y direction. (illustrated by the apps accelerometer
-  		 * image)
-  		 */
-  		
-  		// Log.i("FizzlySensor.ACCELEROMETER.convert()", "dimensione value acc " + value.length);
-  		
-  		
+  	public Point3D convert(final byte[] value) {  		
   		float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 100;
   		float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 100;
   		float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 100;
@@ -93,41 +66,47 @@ public enum FizzlySensor {
   MAGNETOMETER(UUID_MAG_SERV, UUID_MAG_DATA, UUID_MAG_CONF) {
     @Override
     public Point3D convert(final byte [] value) {
-      Point3D mcal = MagnetometerCalibrationCoefficients.INSTANCE.val;
       // Multiply x and y with -1 so that the values correspond with the image in the app
-      float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 100;
-	  float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 100;
-	  float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 100;
-      
-      //Log.i("FizzlySensor.MAGNETOMETER.convert()", "dimensione value mag " + value.length);
+      float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 6842;
+	  float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 6842;
+	  float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 6842;
       
 	  return new Point3D(x , y , z);
     }
   },
 
-  GYROSCOPE(UUID_GYR_SERV, UUID_GYR_DATA, UUID_GYR_CONF, (byte)7) {
+  GYROSCOPE(UUID_GYR_SERV, UUID_GYR_DATA, UUID_GYR_CONF) {
     @Override
     public Point3D convert(final byte [] value) {
 
-      float y = shortSignedAtOffset(value, 0) * (500f / 65536f) * -1;
-      float x = shortSignedAtOffset(value, 2) * (500f / 65536f);
-      float z = shortSignedAtOffset(value, 4) * (500f / 65536f);
+      float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 8.75F;
+  	  float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 8.75F;
+  	  float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 8.75F;
       
-      return new Point3D(x,y,z);      
+      return new Point3D(x, y, z);      
     }
   },
 
 
+  BATTERY(UUID_BAT_SERV, UUID_BAT_DATA, UUID_BAT_CONF) {
+	  	@Override
+	  	public Point3D convert(final byte[] value) {  		
+	  		float level = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 100;
+	  		int status = value[2];
 
-  SIMPLE_KEYS(UUID_KEY_SERV, UUID_KEY_DATA, null) {
+	  		Log.v("FizzlySensor", "battery raw data size: " + value[0]+ "  " + value[1]+ "  " +value[2]);
+	  		
+	  		return new Point3D(level , status , 0 );
+	  	}
+	  },
+  
+
+  CAPACITIVE_BUTTON(UUID_KEY_SERV, UUID_KEY_DATA, null) {
     @Override
-    public SimpleKeysStatus convertKeys(final byte [] value) {
-      /*
-       * The key state is encoded into 1 unsigned byte. bit 0 designates the right key. bit 1 designates the left key. bit 2 designates the side key.
-       */
+    public Integer convertKeys(final byte [] value) {
       Integer encodedInteger = (int) value[0];
 
-      return SimpleKeysStatus.values()[encodedInteger % 4];
+      return encodedInteger;
     }
   };
 
@@ -153,7 +132,7 @@ public enum FizzlySensor {
     throw new UnsupportedOperationException("Programmer error, the individual enum classes are supposed to override this method.");
   }
 
-  public SimpleKeysStatus convertKeys(byte[] value) {
+  public Integer convertKeys(byte[] value) {
     throw new UnsupportedOperationException("Programmer error, the individual enum classes are supposed to override this method.");
   }
 
@@ -167,19 +146,19 @@ public enum FizzlySensor {
 	public static final byte ENABLE_SENSOR_CODE = 1;
 	public static final byte CALIBRATE_SENSOR_CODE = 2;
 
-	/**
-	 * Constructor called by the Gyroscope because he needs a different enable
-	 * code.
-	 */
-  private FizzlySensor(UUID service, UUID data, UUID config, byte enableCode) {
-    this.service = service;
-    this.data = data;
-    this.config = config;
-    this.enableCode = enableCode;
-  }
+//	/**
+//	 * Constructor called by the Gyroscope because he needs a different enable
+//	 * code.
+//	 */
+//  private FizzlySensor(UUID service, UUID data, UUID config, byte enableCode) {
+//    this.service = service;
+//    this.data = data;
+//    this.config = config;
+//    this.enableCode = enableCode;
+//  }
 
   /**
-   * Constructor called by all the sensors except Gyroscope
+   * Constructor
    * */
   private FizzlySensor(UUID service, UUID data, UUID config) {
     this.service = service;
@@ -216,5 +195,5 @@ public enum FizzlySensor {
     throw new RuntimeException("Programmer error, unable to find uuid.");
   }
   
-  public static final FizzlySensor[] SENSOR_LIST = { ACCELEROMETER, MAGNETOMETER, GYROSCOPE, SIMPLE_KEYS};
+  public static final FizzlySensor[] SENSOR_LIST = { ACCELEROMETER, MAGNETOMETER, GYROSCOPE, BATTERY, CAPACITIVE_BUTTON};
 }

@@ -78,7 +78,7 @@ public class DeviceActivity extends FragmentActivity {
 	private BluetoothDevice            mBtDevice        = null;
 	private BluetoothGatt              mBtGatt          = null;
 	private List<BluetoothGattService> mServiceList     = null;
-	private static final int           GATT_TIMEOUT     = 100; // milliseconds
+	private static final int           GATT_TIMEOUT     = 300; // milliseconds
 	private boolean                    mServicesRdy     = false;
 	private boolean                    mIsReceiving     = false;
 
@@ -119,9 +119,12 @@ public class DeviceActivity extends FragmentActivity {
 	    mEnabledSensors.clear();
 	    
 	    //es. ABILITARE UN SENSORE
-	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);
+	    mEnabledSensors.add(FizzlySensor.BATTERY);
 	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
-	    // mEnabledSensors.add(FizzlySensor.GYROSCOPE);
+	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);
+	    mEnabledSensors.add(FizzlySensor.GYROSCOPE);
+	    mEnabledSensors.add(FizzlySensor.CAPACITIVE_BUTTON);
+	    
 	    
 	    //se attivi il magnetometro richiama anche calibrateMagnetometer();
 	    //se attivi il barometro richiama anche calibrateHeight();
@@ -256,18 +259,36 @@ public class DeviceActivity extends FragmentActivity {
 			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ACC_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ACC_PERI);
-		  		value = (byte) 1;
+		  		value = (byte) 10;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
 			}	
 			
-			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
+			// FIZZLY: se e' magnetometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_MAG_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_MAG_PERI);
-		  		value = (byte) 1;
+		  		value = (byte) 10;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell magnetometro : " + value);
+				mBtLeService.waitIdle(GATT_TIMEOUT);
+			}	
+			
+			// FIZZLY: se e' GIRO ne setto il periodo dopo averlo attivato
+			if (confUuid.equals(Fizzly.UUID_GYR_CONF) && enable) {
+				charac = serv.getCharacteristic(Fizzly.UUID_GYR_PERI);
+		  		value = (byte) 10;
+		  		mBtLeService.writeCharacteristic(charac, value);
+		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell GIROSCOPIO : " + value);
+				mBtLeService.waitIdle(GATT_TIMEOUT);
+			}
+			
+			// FIZZLY: se e' magnetometro ne setto il periodo dopo averlo attivato
+			if (confUuid.equals(Fizzly.UUID_BAT_CONF) && enable) {
+				charac = serv.getCharacteristic(Fizzly.UUID_BAT_PERI);
+		  		value = (byte) 50;
+		  		mBtLeService.writeCharacteristic(charac, value);
+		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell batteria : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
 			}
 	  	}
@@ -348,8 +369,7 @@ public class DeviceActivity extends FragmentActivity {
 	// Action methods
 	public void playColor(int millis, int color){
   		BluetoothGattService serv = null;
-  		BluetoothGattCharacteristic charac = null;
-		
+  		BluetoothGattCharacteristic charac = null;		
 
   		serv = mBtGatt.getService(Fizzly.UUID_LED_SERV);
 		charac = serv.getCharacteristic(Fizzly.UUID_LED_CMND);
@@ -362,8 +382,7 @@ public class DeviceActivity extends FragmentActivity {
     	msg[5] = (byte)0x00;
   		mBtLeService.writeCharacteristic(charac, msg);
   		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell magnetometro : " + msg);
-		mBtLeService.waitIdle(GATT_TIMEOUT);
-		
+		mBtLeService.waitIdle(GATT_TIMEOUT);		
 	}
 
 }

@@ -76,6 +76,6 @@ public class Fizzly {
       UUID_BEP_CONF = fromString("f000aa61-0451-4000-cb00-5ec0a1d1cb00"), // 0: disable, 1: enable
       UUID_BEP_CMND = fromString("f000aa63-0451-4000-cb00-5ec0a1d1cb00"), // Period in tens of milliseconds
       
-      UUID_KEY_SERV = fromString("0000ffe0-0000-1000-8000-00805f9b34fb"), 
-      UUID_KEY_DATA = fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+      UUID_KEY_SERV = fromString("f000aa70-0451-4000-cb00-5ec0a1d1cb00"), 
+      UUID_KEY_DATA = fromString("f000aa71-0451-4000-cb00-5ec0a1d1cb00");
 }

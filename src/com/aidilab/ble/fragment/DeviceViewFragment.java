@@ -35,11 +35,7 @@
 package com.aidilab.ble.fragment;
 
 
-import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
-
+import static com.aidilab.ble.sensor.Fizzly.*;
 import java.text.DecimalFormat;
 
 import android.graphics.Color;
@@ -56,6 +52,7 @@ import android.widget.TextView;
 
 import com.aidilab.ble.DeviceActivity;
 import com.aidilab.ble.R;
+import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
@@ -71,9 +68,11 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	
 	// GUI
 	private TextView mStatus;
+	private TextView mBat;
 	private TextView mAcc;
 	private TextView mMag;
 	private TextView mGyr;
+	private TextView mBut;
 	private ImageButton mRgbButton;
 	private ImageButton mPlayRgbButton;
 	
@@ -100,11 +99,12 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	    View view = inflater.inflate(R.layout.fragment_device, container, false);
 	    	    
 	    mStatus = (TextView) view.findViewById(R.id.status);
+	    mBat = (TextView) view.findViewById(R.id.bat_textView);
 	    mAcc = (TextView) view.findViewById(R.id.acc_textView);
 	    mMag = (TextView) view.findViewById(R.id.mag_textView);
 	    mGyr = (TextView) view.findViewById(R.id.gyr_textView);
+	    mBut = (TextView) view.findViewById(R.id.but_textView);
 	    mRgbButton = (ImageButton) view.findViewById(R.id.rgbButton);
-	    mPlayRgbButton = (ImageButton) view.findViewById(R.id.playRgbButton);
 	    
 	    mHighToneButton = (ImageButton) view.findViewById(R.id.highToneButton);
 	    mLowToneButton = (ImageButton) view.findViewById(R.id.lowToneButton);
@@ -114,7 +114,6 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	    mBeepPeriodEditText = (EditText) view.findViewById(R.id.beepPeriodrEditText);
 	    
 	    mRgbButton.setOnClickListener(this);
-	    mPlayRgbButton.setOnClickListener(this);
 	    mHighToneButton.setOnClickListener(this);
 	    mLowToneButton.setOnClickListener(this);
 	    
@@ -160,23 +159,23 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
   		mGyr.setText(msg);
   	} 
+  	
+  	if (uuidStr.equals(UUID_BAT_DATA.toString())) {
+  		v = FizzlySensor.BATTERY.convert(rawValue);
+  		msg = "Voltage: "+ decimal.format(v.x) + "  Status: " + BatteryData.getBatteryAction(v) + "\n";
+  		mBat.setText(msg);
+  	} 
 
   	if (uuidStr.equals(UUID_KEY_DATA.toString())) {
-  		SimpleKeysStatus s;
-  		s = FizzlySensor.SIMPLE_KEYS.convertKeys(rawValue);
+  		Integer s;
+  		s = FizzlySensor.CAPACITIVE_BUTTON.convertKeys(rawValue);
   		
   		switch (s) {
-  		case OFF_OFF:
-  			//nessuno premuto
+  		case 0:
+  			mBut.setText("released");
   			break;
-  		case OFF_ON:
-  			// premuto il secondo
-  			break;
-  		case ON_OFF:
-  			// premuto il primo
-  			break;
-  		case ON_ON:
-  			// premuti entrambi
+  		case 1:
+  			mBut.setText("pressed");
   			break;
   		default:
   			throw new UnsupportedOperationException();
@@ -220,10 +219,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 			});
 			cpd.setTitle( "Pick a color" );
 			cpd.show();			
-			break;
-		case R.id.playRgbButton:
-			mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
-			break;
+			break;		
 		case R.id.highToneButton:
 			Log.i("ScanViewFragmanet.onClick()", "high");
 			break;

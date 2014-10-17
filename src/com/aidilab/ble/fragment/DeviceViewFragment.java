@@ -48,6 +48,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aidilab.ble.DeviceActivity;
@@ -57,6 +59,7 @@ import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
 import com.aidilab.ble.utils.Point3D;
+import com.aidilab.ble.utils.SensorsValues;
 import com.aidilab.ble.utils.SimpleKeysStatus;
 
 // Fragment for Device View
@@ -82,6 +85,9 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	private EditText mRgbPeriodEditText;
 	private EditText mBeepPeriodEditText;
 	private EditText mBeepNumberEditText;
+	
+	private RelativeLayout mRgbLayout;
+	private LinearLayout mBatteryLayout;
 
 	// House-keeping
 	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
@@ -94,8 +100,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	    mInstance = this;
 	    mActivity = (DeviceActivity) getActivity();
     
-	    // The last two arguments ensure LayoutParams are inflated properly.
-	    
+	    // The last two arguments ensure LayoutParams are inflated properly.	    
 	    View view = inflater.inflate(R.layout.fragment_device, container, false);
 	    	    
 	    mStatus = (TextView) view.findViewById(R.id.status);
@@ -109,13 +114,17 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	    mHighToneButton = (ImageButton) view.findViewById(R.id.highToneButton);
 	    mLowToneButton = (ImageButton) view.findViewById(R.id.lowToneButton);
 	    
-	    mRgbPeriodEditText = (EditText) view.findViewById(R.id.rgbPeriodEditText);
-	    mBeepNumberEditText = (EditText) view.findViewById(R.id.beepNumberEditText);
-	    mBeepPeriodEditText = (EditText) view.findViewById(R.id.beepPeriodrEditText);
+//	    mRgbPeriodEditText = (EditText) view.findViewById(R.id.rgbPeriodEditText);
+//	    mBeepNumberEditText = (EditText) view.findViewById(R.id.beepNumberEditText);
+//	    mBeepPeriodEditText = (EditText) view.findViewById(R.id.beepPeriodrEditText);
+	    
+	    mRgbLayout = (RelativeLayout) view.findViewById(R.id.rgbLayout);
+	    mBatteryLayout = (LinearLayout) view.findViewById(R.id.batteryLayout);
 	    
 	    mRgbButton.setOnClickListener(this);
 	    mHighToneButton.setOnClickListener(this);
 	    mLowToneButton.setOnClickListener(this);
+	    mRgbLayout.setOnClickListener(this);
 	    
 	    // Notify activity that UI has been inflated
 	    mActivity.onViewInflated(view);
@@ -140,8 +149,57 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
    * */
   public void onCharacteristicChanged(String uuidStr, byte[] rawValue) {
 		Point3D v;
+		SensorsValues sv;
 		String msg;
+  		Integer button;
+  		int batteryLevel;
 
+	if (uuidStr.equals(UUID_ALL_DATA.toString())) {
+  		sv = FizzlySensor.ACC_MAG_BUTT_BATT.unpack(rawValue);
+  		
+  		// accelerometro
+  		msg = decimal.format(sv.getAccelerometer().x) + "\n" 
+  				+ decimal.format(sv.getAccelerometer().y) + "\n" 
+  				+ decimal.format(sv.getAccelerometer().z) + "\n";
+  		mAcc.setText(msg);
+  		
+  		// magnetometro
+  		msg = decimal.format(sv.getMagnetometer().x) + "\n" 
+  				+ decimal.format(sv.getMagnetometer().y) + "\n" 
+  				+ decimal.format(sv.getMagnetometer().z) + "\n";
+  		mMag.setText(msg);
+  	
+  	    // batteria
+//  		msg = "Voltage: "+ decimal.format(sv.getBatteryLevel()) 
+//  				+ "  Status: " + BatteryData.getBatteryAction(sv.getBatteryLevel(), sv.getBatteryStatus()) + "\n";
+  		batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryLevel());
+  		msg = batteryLevel + " %";
+  		mBat.setText(msg);
+  		
+  		if(batteryLevel < 15)
+  			mBatteryLayout.setBackgroundColor(0x55000000 + Color.RED);
+  		else if(batteryLevel < 40)
+  			mBatteryLayout.setBackgroundColor(0x55000000 + Color.YELLOW);
+  		else
+  			mBatteryLayout.setBackgroundColor(0x55000000 + Color.GREEN);
+  		
+  		// bottone
+  		button = sv.getButton();		
+  		switch (button) {
+  		case 0:
+  			mBut.setText("released");
+  			break;
+  		case 1:
+  			mBut.setText("pressed");
+  			break;
+  		default:
+  			throw new UnsupportedOperationException();
+  		}
+  		
+  		mActivity.detectSequence(sv);
+  	} 	
+		
+		
   	if (uuidStr.equals(UUID_ACC_DATA.toString())) {
   		v = FizzlySensor.ACCELEROMETER.convert(rawValue);
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
@@ -162,15 +220,14 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   	
   	if (uuidStr.equals(UUID_BAT_DATA.toString())) {
   		v = FizzlySensor.BATTERY.convert(rawValue);
-  		msg = "Voltage: "+ decimal.format(v.x) + "  Status: " + BatteryData.getBatteryAction(v) + "\n";
+  		msg = "Voltage: "+ decimal.format(v.x) + "  Status: " + BatteryData.getBatteryAction((float)v.x, (int)v.y) + "\n";
   		mBat.setText(msg);
   	} 
 
   	if (uuidStr.equals(UUID_KEY_DATA.toString())) {
-  		Integer s;
-  		s = FizzlySensor.CAPACITIVE_BUTTON.convertKeys(rawValue);
+  		button = FizzlySensor.CAPACITIVE_BUTTON.convertKeys(rawValue);
   		
-  		switch (s) {
+  		switch (button) {
   		case 0:
   			mBut.setText("released");
   			break;
@@ -204,26 +261,44 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   
   
   private int lastColorSelected = Color.GREEN;
-  
+  HSVColorPickerDialog cpd;
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.rgbButton:
-			HSVColorPickerDialog cpd = new HSVColorPickerDialog(mActivity, lastColorSelected, new OnColorSelectedListener() {
+		case R.id.rgbLayout:
+			cpd = new HSVColorPickerDialog(mActivity, lastColorSelected, new OnColorSelectedListener() {
 			    @Override
 			    public void colorSelected(Integer color) {
 			    	lastColorSelected = color;
 					Log.i("ScanViewFragmanet.onClick()", "rgb " + lastColorSelected);
-					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
+//					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
+					mActivity.playColor(500, lastColorSelected);	
+					mRgbLayout.setBackgroundColor(lastColorSelected + 0xbb000000);
+			    }
+			});
+			cpd.setTitle( "Pick a color" );
+			cpd.show();			
+			break;		
+		case R.id.rgbButton:
+			cpd = new HSVColorPickerDialog(mActivity, lastColorSelected, new OnColorSelectedListener() {
+			    @Override
+			    public void colorSelected(Integer color) {
+			    	lastColorSelected = color;
+					Log.i("ScanViewFragmanet.onClick()", "rgb " + lastColorSelected);
+//					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
+					mActivity.playColor(500, lastColorSelected);	
+					mRgbLayout.setBackgroundColor(lastColorSelected + 0xbb000000);
 			    }
 			});
 			cpd.setTitle( "Pick a color" );
 			cpd.show();			
 			break;		
 		case R.id.highToneButton:
+			mActivity.playBeepSequence(mActivity.BEEPER_TONE_HIGH, 100, 5);
 			Log.i("ScanViewFragmanet.onClick()", "high");
 			break;
 		case R.id.lowToneButton:
+			mActivity.playBeepSequence(mActivity.BEEPER_TONE_LOW,  100, 5);
 			Log.i("ScanViewFragmanet.onClick()", "low");
 			break;
 		default:

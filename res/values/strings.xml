@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BaseBLESensorTAG</string>
+    <string name="app_name">Fizzly</string>
     
     <!-- Main activity -->
 	<string name="button_scan">Scan</string>
@@ -32,7 +32,7 @@
         <item>FizzlyTag</item>      
     </string-array>
         
-    <string name="empty1">*\n</string>
-    <string name="empty3">*\n*\n*\n</string>
+    <string name="empty1">*</string>
+    <string name="empty3">*\n*\n*</string>
 
 </resources>

@@ -35,7 +35,23 @@
 package com.aidilab.ble.sensor;
 
 //import static android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT8;
-import static com.aidilab.ble.sensor.Fizzly.*;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ALL_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ALL_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ALL_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_SERV;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_CONF;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_SERV;
 
 import java.util.UUID;
 
@@ -43,6 +59,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
 import com.aidilab.ble.utils.Point3D;
+import com.aidilab.ble.utils.SensorsValues;
 
 
 /**
@@ -50,7 +67,34 @@ import com.aidilab.ble.utils.Point3D;
  * characteristic-containing-measurement.
  */
 public enum FizzlySensor {
+	ACC_MAG_BUTT_BATT(UUID_ALL_SERV, UUID_ALL_DATA, UUID_ALL_CONF) {
+	  	@Override
+	  	public SensorsValues unpack(final byte[] value) {  		
+	  		float accX = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 100;
+	  		float accY = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 100;
+	  		float accZ = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 100;
+	  		
+	  		float magX = (float) ((short) ((value[6] << 8)  | (value[7] & 0xff)))  / 6842;
+	  		float magY = (float) ((short) ((value[8] << 8)  | (value[9] & 0xff))) / 6842;
+	  		float magZ = (float) ((short) ((value[10] << 8) | (value[11] & 0xff))) / 6842;
 
+	        Integer encodedInteger = (int) value[12];
+
+	  		float batteryLevel = (float) ((short) ((value[13] << 8) | (value[14] & 0xff))) / 100;
+	  		int batteryStatus = value[15];
+	  		
+	  		//Log.i("FizzlySensor","batterystatus: " + batteryStatus);
+	  		
+	  		return new SensorsValues(accX, accY, accZ,
+	  	  			magX, magY, magZ,
+	  	  		    0, 0, 0,
+	  	  		    encodedInteger,
+	  				batteryLevel, batteryStatus); 
+	  	}
+	  },
+	
+	
+	
   ACCELEROMETER(UUID_ACC_SERV, UUID_ACC_DATA, UUID_ACC_CONF) {
   	@Override
   	public Point3D convert(final byte[] value) {  		
@@ -139,6 +183,10 @@ public enum FizzlySensor {
   public Point3D convert(byte[] value) {
     throw new UnsupportedOperationException("Programmer error, the individual enum classes are supposed to override this method.");
   }
+  
+  public SensorsValues unpack(byte[] value) {
+	    throw new UnsupportedOperationException("Programmer error, the individual enum classes are supposed to override this method.");
+	  }
 
 	private final UUID service, data, config;
 	private byte enableCode; // See getEnableSensorCode for explanation.

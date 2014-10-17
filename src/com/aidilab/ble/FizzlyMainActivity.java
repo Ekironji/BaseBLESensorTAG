@@ -37,7 +37,7 @@ public class FizzlyMainActivity extends FragmentActivity {
 	  
 	private static final int NO_DEVICE = -1;
 	private boolean mInitialised = false;
-
+	
 	//BLE management
 	private boolean mBleSupported = true;
 	private boolean mScanning = false;

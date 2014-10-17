@@ -77,5 +77,10 @@ public class Fizzly {
       UUID_BEP_CMND = fromString("f000aa63-0451-4000-cb00-5ec0a1d1cb00"), // Period in tens of milliseconds
       
       UUID_KEY_SERV = fromString("f000aa70-0451-4000-cb00-5ec0a1d1cb00"), 
-      UUID_KEY_DATA = fromString("f000aa71-0451-4000-cb00-5ec0a1d1cb00");
+      UUID_KEY_DATA = fromString("f000aa71-0451-4000-cb00-5ec0a1d1cb00"),
+  
+	  UUID_ALL_SERV = fromString("f000aa80-0451-4000-cb00-5ec0a1d1cb00"), 
+	  UUID_ALL_DATA = fromString("f000aa83-0451-4000-cb00-5ec0a1d1cb00"),
+	  UUID_ALL_CONF = fromString("f000aa81-0451-4000-cb00-5ec0a1d1cb00"), // 0: disable, 1: enable
+	  UUID_ALL_PERI = fromString("f000aa84-0451-4000-cb00-5ec0a1d1cb00"); // Period in tens of milliseconds
 }

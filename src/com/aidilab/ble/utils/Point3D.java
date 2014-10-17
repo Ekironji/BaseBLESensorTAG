@@ -77,4 +77,8 @@ public class Point3D {
       return false;
     return true;
   }
+  
+  public double getModule(){
+	  return Math.sqrt(x*x + y*y + z*z);
+  }
 }

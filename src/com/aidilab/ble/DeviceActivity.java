@@ -48,6 +48,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.gesture.Gesture;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -58,15 +59,24 @@ import android.widget.Toast;
 
 import com.aidilab.ble.common.GattInfo;
 import com.aidilab.ble.fragment.DeviceViewFragment;
+import com.aidilab.ble.gesture.GestureDetector;
 import com.aidilab.ble.sensor.BluetoothLeService;
 import com.aidilab.ble.sensor.Fizzly;
 import com.aidilab.ble.sensor.FizzlySensor;
+import com.aidilab.ble.utils.SensorsValues;
 
 public class DeviceActivity extends FragmentActivity {
 	// Log
 	private static String TAG = "DeviceActivity";
     final byte CHANGE_COLOR = 0x00;
     final byte BLINK 		= 0x01;
+    
+	public static final int BEEPER_ON_OFF_MODE = 0x00;
+	public static final int BEEPER_BLINK_MODE  = 0x01;	
+	public static final int BEEPER_TONE_LOW    = 0x00;
+	public static final int BEEPER_TONE_HIGH   = 0x01;		
+	public static final int BEEPER_OFF         = 0x00;
+	public static final int BEEPER_ON          = 0xff;	
 
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
@@ -88,6 +98,8 @@ public class DeviceActivity extends FragmentActivity {
 	private BluetoothGattService mConnControlService = null;
 	private boolean mMagCalibrateRequest = true;
 	private boolean mHeightCalibrateRequest = true;
+	
+	GestureDetector mGestureDetector = null;
   
   
 	@Override
@@ -119,12 +131,14 @@ public class DeviceActivity extends FragmentActivity {
 	    mEnabledSensors.clear();
 	    
 	    //es. ABILITARE UN SENSORE
-	    mEnabledSensors.add(FizzlySensor.BATTERY);
-	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
-	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);
-	    mEnabledSensors.add(FizzlySensor.GYROSCOPE);
-	    mEnabledSensors.add(FizzlySensor.CAPACITIVE_BUTTON);
+	    mEnabledSensors.add(FizzlySensor.ACC_MAG_BUTT_BATT);	
+	    mEnabledSensors.add(FizzlySensor.GYROSCOPE);	
+//	    mEnabledSensors.add(FizzlySensor.BATTERY);
+	    //mEnabledSensors.add(FizzlySensor.CAPACITIVE_BUTTON);
+//	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
+//	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
 	    
+	    mGestureDetector = new GestureDetector(this.getBaseContext());
 	    
 	    //se attivi il magnetometro richiama anche calibrateMagnetometer();
 	    //se attivi il barometro richiama anche calibrateHeight();
@@ -256,10 +270,21 @@ public class DeviceActivity extends FragmentActivity {
 			} catch (Exception e) {
 				Log.e("DeviceActivity.enableSensors()","service uuid: " + servUuid.toString());
 			}
+	  		
+	  	// FIZZLY: se e' tutti i sensori ne setto il periodo dopo averlo attivato
+			if (confUuid.equals(Fizzly.UUID_ALL_CONF) && enable) {
+				charac = serv.getCharacteristic(Fizzly.UUID_ALL_PERI);
+		  		value = (byte) 10;
+		  		mBtLeService.writeCharacteristic(charac, value);
+		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo di tutti i sensori : " + value);
+				mBtLeService.waitIdle(GATT_TIMEOUT);
+			}
+	  		
+	  		
 			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ACC_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ACC_PERI);
-		  		value = (byte) 10;
+		  		value = (byte) 5;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -277,13 +302,13 @@ public class DeviceActivity extends FragmentActivity {
 			// FIZZLY: se e' GIRO ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_GYR_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_GYR_PERI);
-		  		value = (byte) 10;
+		  		value = (byte) 5;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell GIROSCOPIO : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
 			}
 			
-			// FIZZLY: se e' magnetometro ne setto il periodo dopo averlo attivato
+			// FIZZLY: se e' batteria
 			if (confUuid.equals(Fizzly.UUID_BAT_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_BAT_PERI);
 		  		value = (byte) 50;
@@ -291,6 +316,9 @@ public class DeviceActivity extends FragmentActivity {
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell batteria : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
 			}
+			
+			
+		
 	  	}
   	
 	}
@@ -371,7 +399,7 @@ public class DeviceActivity extends FragmentActivity {
   		BluetoothGattService serv = null;
   		BluetoothGattCharacteristic charac = null;		
 
-  		serv = mBtGatt.getService(Fizzly.UUID_LED_SERV);
+  		serv   = mBtGatt.getService(Fizzly.UUID_LED_SERV);
 		charac = serv.getCharacteristic(Fizzly.UUID_LED_CMND);
 		byte[] msg = new byte[6];
         msg[0] = (byte)CHANGE_COLOR;
@@ -381,8 +409,40 @@ public class DeviceActivity extends FragmentActivity {
     	msg[4] = (byte)(millis/10);
     	msg[5] = (byte)0x00;
   		mBtLeService.writeCharacteristic(charac, msg);
-  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell magnetometro : " + msg);
+  		Log.i("DeviceActivity","Scrtitta la caratteristica dei led : " + msg);
 		mBtLeService.waitIdle(GATT_TIMEOUT);		
+	}
+	
+	public void playBeepSequence(int tone, int millisPeriod, int beepNumber){
+		// abilito il servizio
+		BluetoothGattService serv = null;
+  		BluetoothGattCharacteristic charac = null;		
+
+  		serv   = mBtGatt.getService(Fizzly.UUID_BEP_SERV);
+		charac = serv.getCharacteristic(Fizzly.UUID_BEP_CMND);
+		
+		if(tone != BEEPER_TONE_LOW && tone != BEEPER_TONE_HIGH){		
+			Log.e("FizzlyDevice","Wrong tone value. Must be 0x01 or 0x02");		
+			return;
+		}		
+		
+		if(millisPeriod < 1){		
+			Log.e("FizzlyDevice","Wrong millis period value. Must be greater than zero");		
+			return;
+		}	
+		
+		if(beepNumber < 1){		
+			Log.e("FizzlyDevice","Wrong beep numbers value. Must be greater than zero");		
+			return;
+		}	
+		
+		byte[] msg = {(byte)BEEPER_BLINK_MODE, (byte)tone, (byte)(millisPeriod/10), (byte)(beepNumber) };	
+
+		mBtLeService.writeCharacteristic(charac, msg);
+	}
+	
+	public void detectSequence(SensorsValues sv){
+		mGestureDetector.detectGesture(sv);
 	}
 
 }

@@ -11,9 +11,12 @@ public final class R {
     public static final class array {
         /**  Device Filter 
          */
-        public static final int device_filter=0x7f080000;
+        public static final int device_filter=0x7f090000;
     }
     public static final class attr {
+    }
+    public static final class color {
+        public static final int green_fizzly=0x7f060000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -23,8 +26,8 @@ public final class R {
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f060000;
-        public static final int activity_vertical_margin=0x7f060001;
+        public static final int activity_horizontal_margin=0x7f070000;
+        public static final int activity_vertical_margin=0x7f070001;
     }
     public static final class drawable {
         public static final int bellbbig=0x7f020000;
@@ -32,41 +35,50 @@ public final class R {
         public static final int bluetooth=0x7f020002;
         public static final int fizz_bg=0x7f020003;
         public static final int fizzicon=0x7f020004;
-        public static final int ic_launcher=0x7f020005;
-        public static final int rainbow=0x7f020006;
+        public static final int fizzly_nero=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
+        public static final int rainbow=0x7f020007;
     }
     public static final class id {
-        public static final int acc_textView=0x7f0b0006;
-        public static final int action_settings=0x7f0b0012;
-        public static final int bat_textView=0x7f0b0004;
-        public static final int batteryLayout=0x7f0b0003;
-        public static final int btn_scan=0x7f0b0011;
-        public static final int but_textView=0x7f0b0005;
-        public static final int container=0x7f0b0000;
-        public static final int descr=0x7f0b0001;
-        public static final int device_list=0x7f0b000e;
-        public static final int gyr_textView=0x7f0b0008;
-        public static final int highToneButton=0x7f0b000d;
-        public static final int imageView1=0x7f0b0009;
-        public static final int lowToneButton=0x7f0b000c;
-        public static final int mag_textView=0x7f0b0007;
-        public static final int no_device=0x7f0b0010;
-        public static final int opt_bt=0x7f0b0013;
-        public static final int opt_exit=0x7f0b0014;
-        public static final int pb_busy=0x7f0b000f;
-        public static final int rgbButton=0x7f0b000b;
-        public static final int rgbLayout=0x7f0b000a;
-        public static final int status=0x7f0b0002;
+        public static final int accBarGraph=0x7f0c000a;
+        public static final int acc_textView=0x7f0c0009;
+        public static final int action_settings=0x7f0c0019;
+        public static final int bat_textView=0x7f0c0006;
+        public static final int batteryLayout=0x7f0c0005;
+        public static final int btn_scan=0x7f0c0017;
+        public static final int but_textView=0x7f0c0007;
+        public static final int container=0x7f0c0000;
+        public static final int device_list=0x7f0c0015;
+        public static final int fizzlyName=0x7f0c0002;
+        public static final int gyrBarGraph=0x7f0c0010;
+        public static final int gyr_textView=0x7f0c000f;
+        public static final int highToneButton=0x7f0c0014;
+        public static final int imageView1=0x7f0c0003;
+        public static final int imageViewFizzly=0x7f0c0001;
+        public static final int lowToneButton=0x7f0c0013;
+        public static final int magBarGraph=0x7f0c000d;
+        public static final int mag_textView=0x7f0c000c;
+        public static final int no_device=0x7f0c0016;
+        public static final int opt_bt=0x7f0c001a;
+        public static final int opt_exit=0x7f0c001b;
+        public static final int pb_busy=0x7f0c0018;
+        public static final int rgbButton=0x7f0c0012;
+        public static final int rgbLayout=0x7f0c0011;
+        public static final int status=0x7f0c0004;
+        public static final int textView1=0x7f0c0008;
+        public static final int textView2=0x7f0c000b;
+        public static final int textView3=0x7f0c000e;
     }
     public static final class layout {
         public static final int activity_device=0x7f030000;
         public static final int activity_main=0x7f030001;
-        public static final int element_device=0x7f030002;
-        public static final int fragment_device=0x7f030003;
-        public static final int fragment_scan=0x7f030004;
+        public static final int ball_acceleration=0x7f030002;
+        public static final int element_device=0x7f030003;
+        public static final int fragment_device=0x7f030004;
+        public static final int fragment_scan=0x7f030005;
     }
     public static final class menu {
-        public static final int main_activity_menu=0x7f0a0000;
+        public static final int main_activity_menu=0x7f0b0000;
     }
     public static final class raw {
         public static final int laser1=0x7f050000;
@@ -76,29 +88,31 @@ public final class R {
     public static final class string {
         /**  Options menu 
          */
-        public static final int action_settings=0x7f07000e;
-        public static final int app_closing=0x7f07000b;
-        public static final int app_name=0x7f070000;
-        public static final int ble_not_supported=0x7f070008;
-        public static final int bt=0x7f07000f;
-        public static final int bt_not_on=0x7f07000a;
-        public static final int bt_not_supported=0x7f070007;
-        public static final int bt_on=0x7f070009;
+        public static final int action_settings=0x7f08000f;
+        public static final int app_closing=0x7f08000b;
+        public static final int app_name=0x7f080000;
+        public static final int ble_not_supported=0x7f080008;
+        public static final int bt=0x7f080010;
+        public static final int bt_not_on=0x7f08000a;
+        public static final int bt_not_supported=0x7f080007;
+        public static final int bt_on=0x7f080009;
         /**  Main activity 
          */
-        public static final int button_scan=0x7f070001;
-        public static final int control=0x7f070006;
-        public static final int device=0x7f070003;
-        public static final int disconnected=0x7f070005;
-        public static final int empty1=0x7f070013;
-        public static final int empty3=0x7f070014;
-        public static final int exit=0x7f070010;
-        public static final int header=0x7f070004;
-        public static final int image=0x7f070012;
-        public static final int nodevice=0x7f07000c;
-        public static final int prefs=0x7f070011;
-        public static final int scan_advice=0x7f07000d;
-        public static final int title_device_list=0x7f070002;
+        public static final int button_scan=0x7f080001;
+        public static final int control=0x7f080006;
+        public static final int device=0x7f080003;
+        public static final int disconnected=0x7f080005;
+        public static final int empty1=0x7f080014;
+        public static final int empty3=0x7f080015;
+        public static final int exit=0x7f080011;
+        public static final int header=0x7f080004;
+        public static final int image=0x7f080013;
+        public static final int nodevice=0x7f08000c;
+        public static final int nodevice_fizzly=0x7f08000d;
+        public static final int prefs=0x7f080012;
+        public static final int scan_advice=0x7f08000e;
+        public static final int title_device_list=0x7f080002;
+        public static final int xyzLabel=0x7f080016;
     }
     public static final class style {
         /** 
@@ -122,15 +136,15 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f090000;
+        public static final int AppBaseTheme=0x7f0a0000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f090001;
-        public static final int statusStyle=0x7f090002;
-        public static final int statusStyle_Busy=0x7f090004;
-        public static final int statusStyle_Failure=0x7f090005;
-        public static final int statusStyle_Success=0x7f090003;
+        public static final int AppTheme=0x7f0a0001;
+        public static final int statusStyle=0x7f0a0002;
+        public static final int statusStyle_Busy=0x7f0a0004;
+        public static final int statusStyle_Failure=0x7f0a0005;
+        public static final int statusStyle_Success=0x7f0a0003;
     }
     public static final class xml {
         public static final int fizzly_gatt_uuid=0x7f040000;

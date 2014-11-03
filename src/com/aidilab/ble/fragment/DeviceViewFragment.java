@@ -35,13 +35,7 @@
 package com.aidilab.ble.fragment;
 
 
-import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_ALL_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
-
+import static com.aidilab.ble.sensor.Fizzly.*;
 import java.text.DecimalFormat;
 
 import android.graphics.Color;
@@ -59,14 +53,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aidilab.ble.DeviceActivity;
+import com.aidilab.ble2.R;
 import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
-import com.aidilab.ble.sensor.gui.views.BarGraph3AxisView;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.utils.SimpleKeysStatus;
 
 // Fragment for Device View
 public class DeviceViewFragment extends Fragment implements OnClickListener{
@@ -101,11 +95,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	private static final double PA_PER_METER = 12.0;
 	
 	private boolean isMagnetometerBroken = true;
-	
-	private BarGraph3AxisView accBarGraph = null;
-	private BarGraph3AxisView magBarGraph = null;
-	private BarGraph3AxisView gyrBarGraph = null;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    Log.i(TAG, "onCreateView");
@@ -132,18 +122,6 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	    
 	    mRgbLayout = (RelativeLayout) view.findViewById(R.id.rgbLayout);
 	    mBatteryLayout = (LinearLayout) view.findViewById(R.id.batteryLayout);
-	    
-	    accBarGraph = (BarGraph3AxisView) view.findViewById(R.id.accBarGraph);
-	    accBarGraph.setRange(30);
-	    accBarGraph.setBarColors(Color.RED, Color.GREEN, Color.BLUE);
-	    
-	    magBarGraph = (BarGraph3AxisView) view.findViewById(R.id.magBarGraph);
-	    magBarGraph.setRange(3000);
-	    magBarGraph.setBarColors(Color.RED, Color.GREEN, Color.BLUE);
-	    
-	    gyrBarGraph = (BarGraph3AxisView) view.findViewById(R.id.gyrBarGraph);
-	    gyrBarGraph.setRange(4000);
-	    gyrBarGraph.setBarColors(Color.RED, Color.GREEN, Color.BLUE);
 	    
 	    mRgbButton.setOnClickListener(this);
 	    mHighToneButton.setOnClickListener(this);
@@ -185,10 +163,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   		msg = decimal.format(sv.getAccelerometer().x) + "\n" 
   				+ decimal.format(sv.getAccelerometer().y) + "\n" 
   				+ decimal.format(sv.getAccelerometer().z) + "\n";
-  		//mAcc.setText(msg);
-  		accBarGraph.setData(sv.getAccelerometer().x, 
-  				sv.getAccelerometer().y, 
-  				sv.getAccelerometer().z);
+  		mAcc.setText(msg);
   		
   		// PER IL VIDEO LEGO IL MAGNETOMETRO AI DATI DELL ACCELEROMETRO
   		// magnetometro
@@ -202,10 +177,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	  				+ decimal.format(sv.getMagnetometer().y) + "\n" 
 	  				+ decimal.format(sv.getMagnetometer().z) + "\n";
   		}
-  		//mMag.setText(msg);
-  		magBarGraph.setData(sv.getAccelerometer().z * 123, 
-  				sv.getAccelerometer().x * 60, 
-  				sv.getAccelerometer().y * 123);
+  		mMag.setText(msg);
   		
   		batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryLevel());
   		msg = batteryLevel + " %";
@@ -250,8 +222,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   	if (uuidStr.equals(UUID_GYR_DATA.toString())) {
   		v = FizzlySensor.GYROSCOPE.convert(rawValue);
   		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
-  		//mGyr.setText(msg);
-  		gyrBarGraph.setData(v.x, v.y, v.z);
+  		mGyr.setText(msg);
   	} 
   	
   	if (uuidStr.equals(UUID_BAT_DATA.toString())) {

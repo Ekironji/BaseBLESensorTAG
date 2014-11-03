@@ -64,10 +64,6 @@ public class AccelerationBallView extends View{
 	}
 		
 	
-	public void setMaxRange(float max){
-		maxValueRange = max;
-	}
-	
 	public void updateView(float x, float y, float z){
 		this.x = map(x, -maxValueRange, maxValueRange, 0, width  );
 		this.y = map(y, -maxValueRange, maxValueRange, 0, height );

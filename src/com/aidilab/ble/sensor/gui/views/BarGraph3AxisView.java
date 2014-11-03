@@ -46,7 +46,7 @@ public class BarGraph3AxisView extends View {
 			values[i] = Math.abs(values[i]);
 			values[i] = map(values[i], 0, MAX, 0, width);
 			paint.setColor(axisColor[i]);
-			canvas.drawRect(0, (height / 3) * i, values[i], (height / 3) * (i + 1), paint);
+			canvas.drawRect(0, 0, values[i], (height / 3) * (i + 1), paint);
 		}
 		
 	}
@@ -65,13 +65,6 @@ public class BarGraph3AxisView extends View {
 		values[this.x] = x;
 		values[this.y] = y;
 		values[this.z] = z;
-		postInvalidate();
-	}
-	
-	public void setData(double x, double y, double z){
-		values[this.x] = (float) x;
-		values[this.y] = (float) y;
-		values[this.z] = (float) z;
 		postInvalidate();
 	}
 	

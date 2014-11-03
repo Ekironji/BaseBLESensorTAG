@@ -36,29 +36,27 @@ package com.aidilab.ble.fragment;
 
 import java.util.List;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aidilab.ble.FizzlyMainActivity;
-import com.aidilab.ble2.R;
 import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.utils.CustomTimer;
 import com.aidilab.ble.utils.CustomTimerCallback;
+import com.aidilab.ble2.R;
 
 public class ScanViewFragment extends Fragment {
   private static final String TAG = "ScanViewFragment";
@@ -265,11 +263,11 @@ public class ScanViewFragment extends Fragment {
 
       }
 
-      BleDeviceInfo deviceInfo = mDevices.get(position);
+//      BleDeviceInfo deviceInfo = mDevices.get(position);
 //      BluetoothDevice device = deviceInfo.getBluetoothDevice();
-      int rssi = deviceInfo.getRssi();
-      String descr = "John" + "   " + "\nRssi: " + rssi + " dBm";
-      ((TextView) vg.findViewById(R.id.fizzlyName)).setText(descr);
+//      int rssi = deviceInfo.getRssi();
+//      String descr = "John" + " name:" + device.getName() + "\nRssi: " + rssi + " dBm";
+//      ((TextView) vg.findViewById(R.id.fizzlyName)).setText(descr);
 
       return vg;
     }

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#d40e58">
 
-    <com.aidilab.ble.sensor.gui.SquareImageView
+    <com.aidilab.ble.sensor.gui.views.SquareImageView
         android:id="@+id/imageViewFizzly"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,12 +40,13 @@
 	        android:textColor="@android:color/white"/>
 
        <ImageView
-           android:id="@+id/imageView1"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
+           android:id="@+id/imageViewRssi"
+           android:layout_width="30dp"
+           android:layout_height="30dp"
            android:layout_alignParentRight="true"
            android:layout_alignBottom="@+id/fizzlyName" 
-           android:scaleType="centerInside" />
+           android:scaleType="centerInside"
+           android:src="@drawable/rssi_4" />
         
     </RelativeLayout>
     

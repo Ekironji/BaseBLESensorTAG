@@ -1,4 +1,4 @@
-package com.aidilab.ble.sensor.gui;
+package com.aidilab.ble.sensor.gui.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

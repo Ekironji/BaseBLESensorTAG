@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import android.content.Context;
 
-import com.aidilab.ble.R;
+import com.aidilab.ble2.R;
 import com.aidilab.ble.utils.Effect;
 import com.aidilab.ble.utils.SensorsValues;
 
-public class GestureDetector {
+public class GestureDetectorAlpha {
 
 	int CYCLE_LIMIT = 30;
 	
@@ -17,12 +17,13 @@ public class GestureDetector {
 	int cyclesNoSound = 0;
 	
 	
-	public GestureDetector(Context ctx) {
+	public GestureDetectorAlpha(Context ctx) {
 		mContext = ctx;
 		effects.add(new Effect(mContext, R.raw.laser1));
 		effects.add(new Effect(mContext, R.raw.laser2));
 		effects.add(new Effect(mContext, R.raw.laser3));
 	}
+	
 	
 	public void detectGesture(SensorsValues sv){
 		if(sv.getAccelerometer().z > 17){

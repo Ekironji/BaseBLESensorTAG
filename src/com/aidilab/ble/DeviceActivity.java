@@ -59,11 +59,12 @@ import android.widget.Toast;
 
 import com.aidilab.ble.common.GattInfo;
 import com.aidilab.ble.fragment.DeviceViewFragment;
-import com.aidilab.ble.gesture.GestureDetector;
+import com.aidilab.ble.gesture.GestureDetectorAlpha;
 import com.aidilab.ble.sensor.BluetoothLeService;
 import com.aidilab.ble.sensor.Fizzly;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.utils.SensorsValues;
+import com.aidilab.ble2.R;
 
 public class DeviceActivity extends FragmentActivity {
 	// Log
@@ -99,7 +100,7 @@ public class DeviceActivity extends FragmentActivity {
 	private boolean mMagCalibrateRequest = true;
 	private boolean mHeightCalibrateRequest = true;
 	
-	GestureDetector mGestureDetector = null;
+	GestureDetectorAlpha mGestureDetector = null;
   
   
 	@Override
@@ -138,7 +139,7 @@ public class DeviceActivity extends FragmentActivity {
 //	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
 //	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
 	    
-	    mGestureDetector = new GestureDetector(this.getBaseContext());
+	    mGestureDetector = new GestureDetectorAlpha(this.getBaseContext());
 	    
 	    //se attivi il magnetometro richiama anche calibrateMagnetometer();
 	    //se attivi il barometro richiama anche calibrateHeight();

@@ -26,7 +26,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.aidilab.ble.R;
+import com.aidilab.ble2.R;
 import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.fragment.ScanViewFragment;
 import com.aidilab.ble.sensor.BluetoothLeService;

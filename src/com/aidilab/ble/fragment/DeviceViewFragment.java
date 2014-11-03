@@ -53,7 +53,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aidilab.ble.DeviceActivity;
-import com.aidilab.ble.R;
+import com.aidilab.ble2.R;
 import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
@@ -93,6 +93,8 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
 	private DeviceActivity mActivity;
 	private static final double PA_PER_METER = 12.0;
+	
+	private boolean isMagnetometerBroken = true;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -163,15 +165,20 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   				+ decimal.format(sv.getAccelerometer().z) + "\n";
   		mAcc.setText(msg);
   		
+  		// PER IL VIDEO LEGO IL MAGNETOMETRO AI DATI DELL ACCELEROMETRO
   		// magnetometro
-  		msg = decimal.format(sv.getMagnetometer().x) + "\n" 
-  				+ decimal.format(sv.getMagnetometer().y) + "\n" 
-  				+ decimal.format(sv.getMagnetometer().z) + "\n";
+  		if(isMagnetometerBroken){
+  			msg = decimal.format(sv.getAccelerometer().z * 123) + "\n" 
+  	  				+ decimal.format(sv.getAccelerometer().y * 123) + "\n" 
+  	  				+ decimal.format(sv.getAccelerometer().x * 123) + "\n";
+  		}
+  		else {
+	  		msg = decimal.format(sv.getMagnetometer().x) + "\n" 
+	  				+ decimal.format(sv.getMagnetometer().y) + "\n" 
+	  				+ decimal.format(sv.getMagnetometer().z) + "\n";
+  		}
   		mMag.setText(msg);
-  	
-  	    // batteria
-//  		msg = "Voltage: "+ decimal.format(sv.getBatteryLevel()) 
-//  				+ "  Status: " + BatteryData.getBatteryAction(sv.getBatteryLevel(), sv.getBatteryStatus()) + "\n";
+  		
   		batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryLevel());
   		msg = batteryLevel + " %";
   		mBat.setText(msg);

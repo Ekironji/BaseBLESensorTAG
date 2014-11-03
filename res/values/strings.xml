@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fizzly</string>
+    <string name="app_name">Fizzly2</string>
     
     <!-- Main activity -->
 	<string name="button_scan">Scan</string>

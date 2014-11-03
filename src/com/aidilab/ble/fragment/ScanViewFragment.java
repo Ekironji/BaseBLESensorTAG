@@ -55,7 +55,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aidilab.ble.FizzlyMainActivity;
-import com.aidilab.ble.R;
+import com.aidilab.ble2.R;
 import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.utils.CustomTimer;
 import com.aidilab.ble.utils.CustomTimerCallback;

@@ -138,13 +138,15 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="170dip" >
+            android:layout_height="170dip"
+            android:padding="20dp" >
 
             <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/fizzicon" />
+                android:src="@drawable/fizzly_nero"
+                android:scaleType="centerInside" />
 
         </RelativeLayout>
 	    
@@ -170,8 +172,8 @@
 		    <TextView
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="RGB Led"
-		        android:textSize="12dip"/>
+		        android:text="LED"
+		        android:textSize="12sp"/>
 		
 		    <LinearLayout
 		        android:layout_width="match_parent"

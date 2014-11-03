@@ -16,6 +16,8 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
@@ -72,7 +74,10 @@ public class FizzlyMainActivity extends FragmentActivity {
 	    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
-
+	    
+	    getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_fizzly)));
+	    getActionBar().setIcon(android.R.color.transparent);
+	    
 	    // Use this check to determine whether BLE is supported on the device. Then
 	    // you can selectively disable BLE-related features.
 	    if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {

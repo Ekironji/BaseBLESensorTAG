@@ -36,19 +36,21 @@ package com.aidilab.ble.fragment;
 
 import java.util.List;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -68,7 +70,7 @@ public class ScanViewFragment extends Fragment {
   private TextView mEmptyMsg;
   private TextView mStatus;
   private Button mBtnScan = null;
-  private ListView mDeviceListView = null;
+  private GridView mDeviceListView = null;
   private ProgressBar mProgressBar;
 
   private CustomTimer mScanTimer = null;
@@ -89,7 +91,7 @@ public class ScanViewFragment extends Fragment {
     // Initialize widgets
     mStatus = (TextView) view.findViewById(R.id.status);
     mBtnScan = (Button) view.findViewById(R.id.btn_scan);
-    mDeviceListView = (ListView) view.findViewById(R.id.device_list);
+    mDeviceListView = (GridView) view.findViewById(R.id.device_list);
     mDeviceListView.setClickable(true);
     mDeviceListView.setOnItemClickListener(mDeviceClickListener);
     mEmptyMsg = (TextView)view.findViewById(R.id.no_device);
@@ -162,7 +164,7 @@ public class ScanViewFragment extends Fragment {
       mStatus.setTextAppearance(mContext, R.style.statusStyle_Busy);
       mBtnScan.setText("Stop");
       mStatus.setText("Scanning...");
-      mEmptyMsg.setText(R.string.nodevice);
+      mEmptyMsg.setText(R.string.nodevice_fizzly);
       mActivity.updateGuiState();
     } else {
       // Indicate that scanning has stopped
@@ -228,7 +230,7 @@ public class ScanViewFragment extends Fragment {
       mConnectTimer = null;
     }
   }
-
+  
   //
   // CLASS DeviceAdapter: handle device list
   //
@@ -260,13 +262,14 @@ public class ScanViewFragment extends Fragment {
         vg = (ViewGroup) convertView;
       } else {
         vg = (ViewGroup) mInflater.inflate(R.layout.element_device, null);
+
       }
 
       BleDeviceInfo deviceInfo = mDevices.get(position);
-      BluetoothDevice device = deviceInfo.getBluetoothDevice();
+//      BluetoothDevice device = deviceInfo.getBluetoothDevice();
       int rssi = deviceInfo.getRssi();
-      String descr = device.getName() + "\n" + device.getAddress() + "\nRssi: " + rssi + " dBm";
-      ((TextView) vg.findViewById(R.id.descr)).setText(descr);
+      String descr = "John" + "   " + "\nRssi: " + rssi + " dBm";
+      ((TextView) vg.findViewById(R.id.fizzlyName)).setText(descr);
 
       return vg;
     }

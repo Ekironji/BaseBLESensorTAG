@@ -48,8 +48,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.gesture.Gesture;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -109,6 +109,8 @@ public class DeviceActivity extends FragmentActivity {
 	    super.onCreate(savedInstanceState);
 	    Intent intent = getIntent();
 	    
+	    getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_fizzly)));
+	    getActionBar().setIcon(android.R.color.transparent);
 	    // GUI
 	    mDeviceView = new DeviceViewFragment();
 	    
@@ -182,7 +184,7 @@ public class DeviceActivity extends FragmentActivity {
 	    Log.d(TAG, "Gatt view ready");
 	
 	    // Set title bar to device name
-	    setTitle(mBtDevice.getName());
+//	    setTitle(mBtDevice.getName());
 	
 	    // Create GATT object
 	    mBtGatt = BluetoothLeService.getBtGatt();

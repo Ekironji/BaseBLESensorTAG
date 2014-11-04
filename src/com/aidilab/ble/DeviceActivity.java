@@ -94,12 +94,11 @@ public class DeviceActivity extends FragmentActivity {
 	private boolean                    mIsReceiving     = false;
 
 	// SensorTag
-	private List<FizzlySensor> mEnabledSensors = new ArrayList<FizzlySensor>();
+	private List<FizzlySensor>  mEnabledSensors = new ArrayList<FizzlySensor>();
 	private BluetoothGattService mOadService = null;
 	private BluetoothGattService mConnControlService = null;
-	private boolean mMagCalibrateRequest = true;
-	private boolean mHeightCalibrateRequest = true;
 	
+	// Gesture Recognizer
 	GestureDetectorAlpha mGestureDetector = null;
   
   
@@ -137,14 +136,11 @@ public class DeviceActivity extends FragmentActivity {
 	    mEnabledSensors.add(FizzlySensor.ACC_MAG_BUTT_BATT);	
 	    mEnabledSensors.add(FizzlySensor.GYROSCOPE);	
 //	    mEnabledSensors.add(FizzlySensor.BATTERY);
-	    //mEnabledSensors.add(FizzlySensor.CAPACITIVE_BUTTON);
+//	    mEnabledSensors.add(FizzlySensor.CAPACITIVE_BUTTON);
 //	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
 //	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
 	    
 	    mGestureDetector = new GestureDetectorAlpha(this.getBaseContext());
-	    
-	    //se attivi il magnetometro richiama anche calibrateMagnetometer();
-	    //se attivi il barometro richiama anche calibrateHeight();
 	}
 
 	@Override
@@ -342,7 +338,7 @@ public class DeviceActivity extends FragmentActivity {
 	} 	
 	
 	public void calibrateHeight() {
-		mHeightCalibrateRequest = true;		
+		//mHeightCalibrateRequest = true;		
 	}
 
 	

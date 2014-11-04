@@ -10,11 +10,13 @@ import com.aidilab.ble.utils.SensorsValues;
 
 public class GestureDetectorAlpha {
 
-	int CYCLE_LIMIT = 30;
+	int CYCLE_LIMIT = 7;
 	
 	private Context mContext = null;
 	ArrayList<Effect> effects = new ArrayList<Effect>();
-	int cyclesNoSound = 0;
+	int cycles = 0;
+	boolean canPlay = true;
+	
 	
 	
 	public GestureDetectorAlpha(Context ctx) {
@@ -26,11 +28,28 @@ public class GestureDetectorAlpha {
 	
 	
 	public void detectGesture(SensorsValues sv){
-		if(sv.getAccelerometer().z > 17){
-			effects.get(0).play();
+		
+		if(cycles > 0){
+			cycles--;
+			canPlay = false;
 		}
-		if(sv.getButton() > 0){
-			effects.get(1).play();
+		else
+			canPlay = true;
+		
+		
+		if (canPlay) {
+			if (sv.getAccelerometer().z > 17) {
+				effects.get(0).play();
+				cycles = CYCLE_LIMIT;
+			}
+			if (sv.getAccelerometer().y > 17) {
+				effects.get(1).play();
+				cycles = CYCLE_LIMIT;
+			}
+			if (sv.getAccelerometer().y < -17) {
+				effects.get(1).play();
+				cycles = CYCLE_LIMIT;
+			}
 		}
 	}
 	

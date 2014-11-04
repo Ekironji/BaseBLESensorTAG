@@ -10,20 +10,20 @@ import com.aidilab.ble.utils.SensorsValues;
 
 public class GestureDetectorAlpha {
 
-	int CYCLE_LIMIT = 7;
+	private int CYCLE_LIMIT = 7;
 	
 	private Context mContext = null;
-	ArrayList<Effect> effects = new ArrayList<Effect>();
-	int cycles = 0;
-	boolean canPlay = true;
+	private ArrayList<Effect> effects = new ArrayList<Effect>();
+	private int cycles = 0;
+	private boolean canPlay = true;
 	
 	
 	
 	public GestureDetectorAlpha(Context ctx) {
 		mContext = ctx;
-		effects.add(new Effect(mContext, R.raw.laser1));
-		effects.add(new Effect(mContext, R.raw.laser2));
-		effects.add(new Effect(mContext, R.raw.laser3));
+		effects.add(new Effect(mContext, R.raw.drum_a_1));
+		effects.add(new Effect(mContext, R.raw.drum_a_2));
+		effects.add(new Effect(mContext, R.raw.drum_a_3));
 	}
 	
 	
@@ -42,12 +42,12 @@ public class GestureDetectorAlpha {
 				effects.get(0).play();
 				cycles = CYCLE_LIMIT;
 			}
-			if (sv.getAccelerometer().y > 17) {
+			else if (sv.getAccelerometer().y > 17) {
 				effects.get(1).play();
 				cycles = CYCLE_LIMIT;
 			}
-			if (sv.getAccelerometer().y < -17) {
-				effects.get(1).play();
+			else if (sv.getAccelerometer().y < -17) {
+				effects.get(2).play();
 				cycles = CYCLE_LIMIT;
 			}
 		}

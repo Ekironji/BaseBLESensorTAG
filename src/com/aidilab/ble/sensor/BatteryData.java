@@ -31,7 +31,7 @@ public class BatteryData {
 		float volt = voltage - VOLTAGE_LOW_LOW_LIMIT;
 		float range = VOLTAGE_LIMIT - VOLTAGE_LOW_LOW_LIMIT;
 		int perc = (int)((volt / range) * 100F);
-		Log.i("",voltage + " " + volt + " " + range + " " + perc);
+		// Log.i("",voltage + " " + volt + " " + range + " " + perc);
 		
 		return (int)((volt / range) * 100F);
 	}

@@ -65,7 +65,7 @@ import com.aidilab.ble.sensor.BluetoothLeService;
 import com.aidilab.ble.sensor.Fizzly;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 
 public class DeviceActivity extends FragmentActivity {
 	// Log

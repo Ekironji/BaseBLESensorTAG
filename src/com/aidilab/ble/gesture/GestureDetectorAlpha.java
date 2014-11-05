@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothClass.Device;
 import android.content.Context;
 import android.graphics.Color;
 
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 import com.aidilab.ble.DeviceActivity;
 import com.aidilab.ble.utils.Effect;
 import com.aidilab.ble.utils.SensorsValues;

@@ -45,17 +45,17 @@ public class GestureDetectorAlpha {
 		if (canPlay) {
 			if (sv.getAccelerometer().z > 17) {
 				effects.get(0).play();
-				mDeviceActivity.playColor(200, Color.RED);
+				mDeviceActivity.playColorBlink(200, 1 , Color.RED);
 				cycles = CYCLE_LIMIT;
 			}
 			else if (sv.getAccelerometer().y > 17) {
 				effects.get(1).play();
-				mDeviceActivity.playColor(200, Color.GREEN);
+				mDeviceActivity.playColorBlink(200, 1 , Color.GREEN);
 				cycles = CYCLE_LIMIT;
 			}
 			else if (sv.getAccelerometer().y < -17) {
 				effects.get(2).play();
-				mDeviceActivity.playColor(200, Color.BLUE);
+				mDeviceActivity.playColorBlink(200, 1 ,Color.BLUE);
 				cycles = CYCLE_LIMIT;
 			}
 		}

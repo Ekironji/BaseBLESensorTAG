@@ -144,7 +144,7 @@ public class DeviceActivity extends FragmentActivity {
 //	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
 //	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
 	    
-	    mGestureDetector = new GestureDetectorAlpha(this.getBaseContext());
+	    mGestureDetector = new GestureDetectorAlpha(this);
 	}
 
 	@Override
@@ -386,6 +386,7 @@ public class DeviceActivity extends FragmentActivity {
 	  Log.d(TAG,"onCharacteristicWrite: " + uuidStr);
 	}
 
+	// Arrivano i dati dal sensore
 	private void onCharacteristicChanged(String uuidStr, byte[] value) {
 		if (mDeviceView != null) {
 			mDeviceView.onCharacteristicChanged(uuidStr, value);
@@ -411,6 +412,24 @@ public class DeviceActivity extends FragmentActivity {
     	msg[3] = (byte)Color.blue(color);
     	msg[4] = (byte)(millis/10);
     	msg[5] = (byte)0x00;
+  		mBtLeService.writeCharacteristic(charac, msg);
+  		Log.i("DeviceActivity","Scrtitta la caratteristica dei led : " + msg);
+		mBtLeService.waitIdle(GATT_TIMEOUT);		
+	}
+	
+	public void playColorBlink(int millis, int blinkNumber, int color){
+  		BluetoothGattService serv = null;
+  		BluetoothGattCharacteristic charac = null;		
+
+  		serv   = mBtGatt.getService(Fizzly.UUID_LED_SERV);
+		charac = serv.getCharacteristic(Fizzly.UUID_LED_CMND);
+		byte[] msg = new byte[6];
+        msg[0] = (byte)BLINK;
+        msg[1] = (byte)Color.red(color);
+    	msg[2] = (byte)Color.green(color);
+    	msg[3] = (byte)Color.blue(color);
+    	msg[4] = (byte)(millis/10);
+    	msg[5] = (byte)blinkNumber;
   		mBtLeService.writeCharacteristic(charac, msg);
   		Log.i("DeviceActivity","Scrtitta la caratteristica dei led : " + msg);
 		mBtLeService.waitIdle(GATT_TIMEOUT);		

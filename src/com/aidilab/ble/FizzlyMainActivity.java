@@ -16,7 +16,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -28,10 +27,10 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.aidilab.ble2.R;
 import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.fragment.ScanViewFragment;
-import com.aidilab.ble.sensor.BluetoothLeService;
+import com.aidilab.ble.sensor.FizzlyBleService;
+import com.aidilab.ble.R;
 
 public class FizzlyMainActivity extends FragmentActivity {
 	// Log
@@ -49,7 +48,7 @@ public class FizzlyMainActivity extends FragmentActivity {
 	private static BluetoothManager mBluetoothManager;
 	private BluetoothAdapter mBtAdapter = null;
 	private BluetoothDevice mBluetoothDevice = null;
-	private BluetoothLeService mBluetoothLeService = null;
+	private FizzlyBleService mBluetoothLeService = null;
 	private IntentFilter mFilter = null;
 	private String [] mDeviceFilter = null;
 	
@@ -110,8 +109,8 @@ public class FizzlyMainActivity extends FragmentActivity {
 	    
 	    // Register the BroadcastReceiver
 	    mFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-	    mFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
-	    mFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+	    mFilter.addAction(FizzlyBleService.ACTION_GATT_CONNECTED);
+	    mFilter.addAction(FizzlyBleService.ACTION_GATT_DISCONNECTED);
 	}
 	
 	@Override
@@ -376,13 +375,13 @@ public class FizzlyMainActivity extends FragmentActivity {
 	  private void startBluetoothLeService() {
 	    boolean f;
 
-	    Intent bindIntent = new Intent(this, BluetoothLeService.class);
+	    Intent bindIntent = new Intent(this, FizzlyBleService.class);
 	    startService(bindIntent);
 	    f = bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 	    if (f)
-	      Log.d(TAG, "BluetoothLeService - success");
+	      Log.d(TAG, "FizzlyBleService - success");
 	    else {
-	      Toast.makeText(this, "Bind to BluetoothLeService failed", Toast.LENGTH_SHORT).show();
+	      Toast.makeText(this, "Bind to FizzlyBleService failed", Toast.LENGTH_SHORT).show();
 	      finish();
 	    }
 	  }
@@ -419,7 +418,7 @@ public class FizzlyMainActivity extends FragmentActivity {
 	  
 	  // ////////////////////////////////////////////////////////////////////////////////////////////////
 	  //
-	  // Broadcasted actions from Bluetooth adapter and BluetoothLeService
+	  // Broadcasted actions from Bluetooth adapter and FizzlyBleService
 	  //
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
@@ -443,17 +442,17 @@ public class FizzlyMainActivity extends FragmentActivity {
 	  			}
 
 	  			updateGuiState();
-	  		} else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+	  		} else if (FizzlyBleService.ACTION_GATT_CONNECTED.equals(action)) {
 	  			// GATT connect
-	  			int status = intent.getIntExtra(BluetoothLeService.EXTRA_STATUS, BluetoothGatt.GATT_FAILURE);
+	  			int status = intent.getIntExtra(FizzlyBleService.EXTRA_STATUS, BluetoothGatt.GATT_FAILURE);
 	  			if (status == BluetoothGatt.GATT_SUCCESS) {
 	  				setBusy(false);
 	  				startDeviceActivity();
 	  			} else
 	  				setError("Connect failed. Status: " + status);
-	  		} else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+	  		} else if (FizzlyBleService.ACTION_GATT_DISCONNECTED.equals(action)) {
 	  			// GATT disconnect
-	  			int status = intent.getIntExtra(BluetoothLeService.EXTRA_STATUS, BluetoothGatt.GATT_FAILURE);
+	  			int status = intent.getIntExtra(FizzlyBleService.EXTRA_STATUS, BluetoothGatt.GATT_FAILURE);
 	  			stopDeviceActivity();
 	  			if (status == BluetoothGatt.GATT_SUCCESS) {
 	  				setBusy(false);
@@ -474,9 +473,9 @@ public class FizzlyMainActivity extends FragmentActivity {
 	private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
 	    public void onServiceConnected(ComponentName componentName, IBinder service) {
-	      mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+	      mBluetoothLeService = ((FizzlyBleService.LocalBinder) service).getService();
 	      if (!mBluetoothLeService.initialize()) {
-	        Log.e(TAG, "Unable to initialize BluetoothLeService");
+	        Log.e(TAG, "Unable to initialize FizzlyBleService");
 	        finish();
 	        return;
 	      }
@@ -489,13 +488,13 @@ public class FizzlyMainActivity extends FragmentActivity {
 	        });
 	      } else {
 	        startScan();
-	        Log.i(TAG, "BluetoothLeService connected");
+	        Log.i(TAG, "FizzlyBleService connected");
 	      }
 	    }
 
 	    public void onServiceDisconnected(ComponentName componentName) {
 	      mBluetoothLeService = null;
-	      Log.i(TAG, "BluetoothLeService disconnected");
+	      Log.i(TAG, "FizzlyBleService disconnected");
 	    }
 	};
 	  

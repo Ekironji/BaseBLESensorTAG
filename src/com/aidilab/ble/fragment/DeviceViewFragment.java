@@ -66,7 +66,7 @@ import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
 import com.aidilab.ble.sensor.gui.views.BarGraph3AxisView;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 
 // Fragment for Device View
 public class DeviceViewFragment extends Fragment implements OnClickListener{
@@ -87,6 +87,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	
 	private ImageButton mHighToneButton;
 	private ImageButton mLowToneButton;
+	private ImageButton rssiButton;
 	
 	private EditText mRgbPeriodEditText;
 	private EditText mBeepPeriodEditText;
@@ -122,6 +123,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	    mGyr = (TextView) view.findViewById(R.id.gyr_textView);
 	    mBut = (TextView) view.findViewById(R.id.but_textView);
 	    mRgbButton = (ImageButton) view.findViewById(R.id.rgbButton);
+	    rssiButton = (ImageButton) view.findViewById(R.id.imageButtonRssi);
 	    
 	    mHighToneButton = (ImageButton) view.findViewById(R.id.highToneButton);
 	    mLowToneButton = (ImageButton) view.findViewById(R.id.lowToneButton);
@@ -149,6 +151,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	    mHighToneButton.setOnClickListener(this);
 	    mLowToneButton.setOnClickListener(this);
 	    mRgbLayout.setOnClickListener(this);
+	    rssiButton.setOnClickListener(this);
 	    
 	    // Notify activity that UI has been inflated
 	    mActivity.onViewInflated(view);
@@ -164,9 +167,9 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 
 
 	@Override
-  public void onPause() {
-    super.onPause();
-  }
+	public void onPause() {
+		super.onPause();
+	}
 
   /**
    * Handle changes in sensor values
@@ -298,6 +301,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   
   private int lastColorSelected = Color.GREEN;
   HSVColorPickerDialog cpd;
+  
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
@@ -307,7 +311,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 			    public void colorSelected(Integer color) {
 			    	lastColorSelected = color;
 					Log.i("ScanViewFragmanet.onClick()", "rgb " + lastColorSelected);
-//					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
+	//					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
 					mActivity.playColor(500, lastColorSelected);	
 					mRgbLayout.setBackgroundColor(lastColorSelected + 0xbb000000);
 			    }
@@ -321,7 +325,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 			    public void colorSelected(Integer color) {
 			    	lastColorSelected = color;
 					Log.i("ScanViewFragmanet.onClick()", "rgb " + lastColorSelected);
-//					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
+	//					mActivity.playColor(Integer.parseInt(mRgbPeriodEditText.getText().toString()), lastColorSelected);	
 					mActivity.playColor(500, lastColorSelected);	
 					mRgbLayout.setBackgroundColor(lastColorSelected + 0xbb000000);
 			    }
@@ -336,6 +340,10 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 		case R.id.lowToneButton:
 			mActivity.playBeepSequence(mActivity.BEEPER_TONE_LOW,  100, 5);
 			Log.i("ScanViewFragmanet.onClick()", "low");
+			break;
+		case R.id.imageButtonRssi:
+			SignalPowerFragment rssiFragment = new SignalPowerFragment();
+			mActivity.changeFragment(rssiFragment);
 			break;
 		default:
 			break;

@@ -1,5 +1,5 @@
 /**************************************************************************************************
-  Filename:       BluetoothLeService.java
+  Filename:       FizzlyBleService.java
   Revised:        $Date: 2013-09-09 16:23:36 +0200 (ma, 09 sep 2013) $
   Revision:       $Revision: 27674 $
 
@@ -57,8 +57,8 @@ import android.util.Log;
 /**
  * Service for managing connection and data communication with a GATT server hosted on a given Bluetooth LE device.
  */
-public class BluetoothLeService extends Service {
-  static final String TAG = "BluetoothLeService";
+public class FizzlyBleService extends Service {
+  static final String TAG = "FizzlyBleService";
 
   public final static String ACTION_GATT_CONNECTED           = "com.aidilab.ble.common.ACTION_GATT_CONNECTED";
   public final static String ACTION_GATT_DISCONNECTED        = "com.aidilab.ble.ACTION_GATT_DISCONNECTED";
@@ -75,9 +75,11 @@ public class BluetoothLeService extends Service {
   private BluetoothManager mBluetoothManager = null;
   private BluetoothAdapter mBtAdapter        = null;
   private BluetoothGatt mBluetoothGatt       = null;
-  private static BluetoothLeService mThis    = null;
+  private static FizzlyBleService mThis    = null;
   private volatile boolean mBusy             = false; // Write/read pending response
   private String mBluetoothDeviceAddress;
+  
+  private int rssi = -1;
 
   /**
    * GATT client callbacks
@@ -144,6 +146,12 @@ public class BluetoothLeService extends Service {
       mBusy = false;
       Log.i(TAG, "onDescriptorWrite");
     }
+    
+    @Override
+    public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+      FizzlyBleService.this.rssi = rssi;
+      Log.d(TAG, "Remote RSSI: "+rssi);
+    }
   };
 
   private void broadcastUpdate(final String action, final String address, final int status) {
@@ -185,8 +193,8 @@ public class BluetoothLeService extends Service {
    * Manage the BLE service
    */
   public class LocalBinder extends Binder {
-    public BluetoothLeService getService() {
-      return BluetoothLeService.this;
+    public FizzlyBleService getService() {
+      return FizzlyBleService.this;
     }
   }
 
@@ -520,7 +528,7 @@ public class BluetoothLeService extends Service {
     return mThis.mBluetoothManager;
   }
 
-  public static BluetoothLeService getInstance() {
+  public static FizzlyBleService getInstance() {
     return mThis;
   }
 
@@ -538,6 +546,10 @@ public class BluetoothLeService extends Service {
     }
 
     return i > 0;
+  }
+  
+  public int getRSSI(){
+	  return this.rssi;
   }
 
 }

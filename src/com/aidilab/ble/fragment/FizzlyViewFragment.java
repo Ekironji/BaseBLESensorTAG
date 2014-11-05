@@ -52,21 +52,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aidilab.ble.DeviceActivity;
 import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
-import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
-import com.aidilab.ble.sensor.gui.views.BarGraph3AxisView;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 
 // Empty Fragment for Fizzly Device View
 public class FizzlyViewFragment extends Fragment implements OnClickListener{

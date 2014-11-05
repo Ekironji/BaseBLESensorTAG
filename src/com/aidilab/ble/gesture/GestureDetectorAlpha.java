@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 import com.aidilab.ble.utils.Effect;
 import com.aidilab.ble.utils.SensorsValues;
 

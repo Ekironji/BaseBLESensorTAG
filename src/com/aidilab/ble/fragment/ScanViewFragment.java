@@ -36,7 +36,6 @@ package com.aidilab.ble.fragment;
 
 import java.util.List;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -56,7 +55,7 @@ import com.aidilab.ble.FizzlyMainActivity;
 import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.utils.CustomTimer;
 import com.aidilab.ble.utils.CustomTimerCallback;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 
 public class ScanViewFragment extends Fragment {
   private static final String TAG = "ScanViewFragment";

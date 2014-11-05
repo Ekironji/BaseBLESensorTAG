@@ -2,28 +2,33 @@ package com.aidilab.ble.gesture;
 
 import java.util.ArrayList;
 
+import android.bluetooth.BluetoothClass.Device;
 import android.content.Context;
+import android.graphics.Color;
 
 import com.aidilab.ble2.R;
+import com.aidilab.ble.DeviceActivity;
 import com.aidilab.ble.utils.Effect;
 import com.aidilab.ble.utils.SensorsValues;
 
 public class GestureDetectorAlpha {
 
-	int CYCLE_LIMIT = 7;
+	private int CYCLE_LIMIT = 7;
 	
+	private DeviceActivity mDeviceActivity = null;
 	private Context mContext = null;
-	ArrayList<Effect> effects = new ArrayList<Effect>();
-	int cycles = 0;
-	boolean canPlay = true;
+	private ArrayList<Effect> effects = new ArrayList<Effect>();
+	private int cycles = 0;
+	private boolean canPlay = true;
 	
 	
 	
-	public GestureDetectorAlpha(Context ctx) {
-		mContext = ctx;
-		effects.add(new Effect(mContext, R.raw.laser1));
-		effects.add(new Effect(mContext, R.raw.laser2));
-		effects.add(new Effect(mContext, R.raw.laser3));
+	public GestureDetectorAlpha(DeviceActivity mDeviceActivity) {
+		this.mDeviceActivity = mDeviceActivity;
+		this.mContext = mDeviceActivity.getBaseContext();
+		effects.add(new Effect(mContext, R.raw.drum_a_1));
+		effects.add(new Effect(mContext, R.raw.drum_a_2));
+		effects.add(new Effect(mContext, R.raw.drum_a_3));
 	}
 	
 	
@@ -40,14 +45,17 @@ public class GestureDetectorAlpha {
 		if (canPlay) {
 			if (sv.getAccelerometer().z > 17) {
 				effects.get(0).play();
+				mDeviceActivity.playColorBlink(200, 1 , Color.RED);
 				cycles = CYCLE_LIMIT;
 			}
-			if (sv.getAccelerometer().y > 17) {
+			else if (sv.getAccelerometer().y > 17) {
 				effects.get(1).play();
+				mDeviceActivity.playColorBlink(200, 1 , Color.GREEN);
 				cycles = CYCLE_LIMIT;
 			}
-			if (sv.getAccelerometer().y < -17) {
-				effects.get(1).play();
+			else if (sv.getAccelerometer().y < -17) {
+				effects.get(2).play();
+				mDeviceActivity.playColorBlink(200, 1 ,Color.BLUE);
 				cycles = CYCLE_LIMIT;
 			}
 		}

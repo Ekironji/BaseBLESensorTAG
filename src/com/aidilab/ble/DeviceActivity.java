@@ -59,6 +59,7 @@ import android.widget.Toast;
 
 import com.aidilab.ble.common.GattInfo;
 import com.aidilab.ble.fragment.DeviceViewFragment;
+import com.aidilab.ble.fragment.FizzlyViewFragment;
 import com.aidilab.ble.gesture.GestureDetectorAlpha;
 import com.aidilab.ble.sensor.BluetoothLeService;
 import com.aidilab.ble.sensor.Fizzly;
@@ -82,7 +83,8 @@ public class DeviceActivity extends FragmentActivity {
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	
-	private DeviceViewFragment mDeviceView = null;
+	//private DeviceViewFragment mDeviceView         = null;
+	private FizzlyViewFragment mDeviceView = null;
 
 	// BLE
 	private BluetoothLeService         mBtLeService     = null;
@@ -111,8 +113,10 @@ public class DeviceActivity extends FragmentActivity {
 	    
 	    getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_fizzly)));
 	    getActionBar().setIcon(android.R.color.transparent);
-	    // GUI
-	    mDeviceView = new DeviceViewFragment();
+	    
+	    // GUI - choosing fragment 
+	    //mDeviceView = new DeviceViewFragment();
+	    mDeviceView = new FizzlyViewFragment();
 	    
 	    if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -140,7 +144,7 @@ public class DeviceActivity extends FragmentActivity {
 //	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
 //	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
 	    
-	    mGestureDetector = new GestureDetectorAlpha(this.getBaseContext());
+	    mGestureDetector = new GestureDetectorAlpha(this);
 	}
 
 	@Override
@@ -273,7 +277,7 @@ public class DeviceActivity extends FragmentActivity {
 	  	// FIZZLY: se e' tutti i sensori ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ALL_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ALL_PERI);
-		  		value = (byte) 10;
+		  		value = (byte) 5;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo di tutti i sensori : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -382,6 +386,7 @@ public class DeviceActivity extends FragmentActivity {
 	  Log.d(TAG,"onCharacteristicWrite: " + uuidStr);
 	}
 
+	// Arrivano i dati dal sensore
 	private void onCharacteristicChanged(String uuidStr, byte[] value) {
 		if (mDeviceView != null) {
 			mDeviceView.onCharacteristicChanged(uuidStr, value);
@@ -407,6 +412,24 @@ public class DeviceActivity extends FragmentActivity {
     	msg[3] = (byte)Color.blue(color);
     	msg[4] = (byte)(millis/10);
     	msg[5] = (byte)0x00;
+  		mBtLeService.writeCharacteristic(charac, msg);
+  		Log.i("DeviceActivity","Scrtitta la caratteristica dei led : " + msg);
+		mBtLeService.waitIdle(GATT_TIMEOUT);		
+	}
+	
+	public void playColorBlink(int millis, int blinkNumber, int color){
+  		BluetoothGattService serv = null;
+  		BluetoothGattCharacteristic charac = null;		
+
+  		serv   = mBtGatt.getService(Fizzly.UUID_LED_SERV);
+		charac = serv.getCharacteristic(Fizzly.UUID_LED_CMND);
+		byte[] msg = new byte[6];
+        msg[0] = (byte)BLINK;
+        msg[1] = (byte)Color.red(color);
+    	msg[2] = (byte)Color.green(color);
+    	msg[3] = (byte)Color.blue(color);
+    	msg[4] = (byte)(millis/10);
+    	msg[5] = (byte)blinkNumber;
   		mBtLeService.writeCharacteristic(charac, msg);
   		Log.i("DeviceActivity","Scrtitta la caratteristica dei led : " + msg);
 		mBtLeService.waitIdle(GATT_TIMEOUT);		

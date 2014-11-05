@@ -77,7 +77,6 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
 	
 	// Views elements
 	private TextView mStatus;
-
 	
 	// House-keeping
 	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
@@ -191,20 +190,20 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
 
  
 	public void setStatus(String txt) {
-	  	mStatus.setText(txt);
-	  	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Success);
+//	  	mStatus.setText(txt);
+//	  	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Success);
 	}
 	
 	public void setError(String txt) {
-	  	mStatus.setText(txt);
-	  	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Failure);
+//	  	mStatus.setText(txt);
+//	  	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Failure);
 	}
 	
 	void setBusy(boolean f) {
-	  	if (f)
-	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle_Busy);
-	  	else
-	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle);  		
+//	  	if (f)
+//	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle_Busy);
+//	  	else
+//	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle);  		
 	}
 
   

@@ -57,7 +57,7 @@ import android.util.Log;
 /**
  * Service for managing connection and data communication with a GATT server hosted on a given Bluetooth LE device.
  */
-public class BluetoothLeService extends Service {
+public class FizzlyBleService extends Service {
   static final String TAG = "BluetoothLeService";
 
   public final static String ACTION_GATT_CONNECTED           = "com.aidilab.ble.common.ACTION_GATT_CONNECTED";
@@ -75,7 +75,7 @@ public class BluetoothLeService extends Service {
   private BluetoothManager mBluetoothManager = null;
   private BluetoothAdapter mBtAdapter        = null;
   private BluetoothGatt mBluetoothGatt       = null;
-  private static BluetoothLeService mThis    = null;
+  private static FizzlyBleService mThis    = null;
   private volatile boolean mBusy             = false; // Write/read pending response
   private String mBluetoothDeviceAddress;
 
@@ -185,8 +185,8 @@ public class BluetoothLeService extends Service {
    * Manage the BLE service
    */
   public class LocalBinder extends Binder {
-	  public BluetoothLeService getService() {
-		  return BluetoothLeService.this;
+	  public FizzlyBleService getService() {
+		  return FizzlyBleService.this;
 	  }
   }
 
@@ -520,7 +520,7 @@ public class BluetoothLeService extends Service {
 	  return mThis.mBluetoothManager;
   }
 
-  public static BluetoothLeService getInstance() {
+  public static FizzlyBleService getInstance() {
 	  return mThis;
   }
 

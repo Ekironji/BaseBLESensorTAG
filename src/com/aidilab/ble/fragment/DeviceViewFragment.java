@@ -207,7 +207,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   				sv.getAccelerometer().x * 60, 
   				sv.getAccelerometer().y * 123);
   		
-  		batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryLevel());
+  		batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryVoltage());
   		msg = batteryLevel + " %";
   		mBat.setText(msg);
   		

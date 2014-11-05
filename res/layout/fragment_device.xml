@@ -27,7 +27,7 @@
 	        android:layout_margin="5dip"
 	        android:orientation="vertical" 
 	        android:background="#5522a565"
-	        android:layout_weight="0.5">  
+	        android:layout_weight="0.55">  
 	     
 	        <TextView
 		        android:layout_width="wrap_content"
@@ -60,16 +60,6 @@
 		        android:layout_height="wrap_content"
 		        android:text="@string/empty1"/>
 	    </LinearLayout>
-
-	    <ImageButton
-	        android:id="@+id/imageButtonRssi"
-	        android:layout_width="0dip"
-	        android:layout_height="match_parent"
-	        android:layout_weight="0.5"
-	        android:src="@drawable/rssi_1" 
-	        android:scaleType="centerInside"
-	        android:background="@android:color/transparent"/>
-
 	</LinearLayout>
     
 <!-- 	ACCELEROMETRO e MAGNETOMETRO  -->

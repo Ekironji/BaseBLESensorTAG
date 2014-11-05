@@ -40,7 +40,6 @@ import java.util.UUID;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -52,7 +51,6 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -62,10 +60,11 @@ import android.widget.Toast;
 import com.aidilab.ble.common.GattInfo;
 import com.aidilab.ble.fragment.DeviceViewFragment;
 import com.aidilab.ble.gesture.GestureDetectorAlpha;
+import com.aidilab.ble.sensor.BluetoothLeService;
 import com.aidilab.ble.sensor.Fizzly;
-import com.aidilab.ble.sensor.FizzlyBleService;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.utils.SensorsValues;
+import com.aidilab.ble2.R;
 
 public class DeviceActivity extends FragmentActivity {
 	// Log
@@ -86,7 +85,7 @@ public class DeviceActivity extends FragmentActivity {
 	private DeviceViewFragment mDeviceView = null;
 
 	// BLE
-	private FizzlyBleService         mBtLeService     = null;
+	private BluetoothLeService         mBtLeService     = null;
 	private BluetoothDevice            mBtDevice        = null;
 	private BluetoothGatt              mBtGatt          = null;
 	private List<BluetoothGattService> mServiceList     = null;
@@ -101,6 +100,7 @@ public class DeviceActivity extends FragmentActivity {
 	
 	// Gesture Recognizer
 	GestureDetectorAlpha mGestureDetector = null;
+  
   
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +120,7 @@ public class DeviceActivity extends FragmentActivity {
 		}
 	    
 	    // BLE
-	    mBtLeService = FizzlyBleService.getInstance();
+	    mBtLeService = BluetoothLeService.getInstance();
 	    mBtDevice = intent.getParcelableExtra(EXTRA_DEVICE);
 	    mServiceList = new ArrayList<BluetoothGattService>();
 	
@@ -141,28 +141,6 @@ public class DeviceActivity extends FragmentActivity {
 //	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
 	    
 	    mGestureDetector = new GestureDetectorAlpha(this.getBaseContext());
-	}
-	
-	public BluetoothGatt getBtLeGatt() {
-		return mBtGatt;
-	}
-	
-	public FizzlyBleService getBtLeSerivice() {
-		return mBtLeService;
-	}
-	
-	private BluetoothGattCallback mGattCallback = new BluetoothGattCallback()
-    {
-		@Override
-        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status)
-        {
-            Log.i(TAG, "Remote RSSI: " + rssi);
-        }
-    };
-	
-	public void changeFragment(Fragment fragment){
-		getSupportFragmentManager().beginTransaction()
-			.replace(R.id.container, fragment).commit();
 	}
 
 	@Override
@@ -192,10 +170,10 @@ public class DeviceActivity extends FragmentActivity {
 
 	private static IntentFilter makeGattUpdateIntentFilter() {
 	  	final IntentFilter fi = new IntentFilter();
-	  	fi.addAction(FizzlyBleService.ACTION_GATT_SERVICES_DISCOVERED);
-	  	fi.addAction(FizzlyBleService.ACTION_DATA_NOTIFY);
-	  	fi.addAction(FizzlyBleService.ACTION_DATA_WRITE);
-	  	fi.addAction(FizzlyBleService.ACTION_DATA_READ);
+	  	fi.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+	  	fi.addAction(BluetoothLeService.ACTION_DATA_NOTIFY);
+	  	fi.addAction(BluetoothLeService.ACTION_DATA_WRITE);
+	  	fi.addAction(BluetoothLeService.ACTION_DATA_READ);
 	  	return fi;
 	}
 
@@ -206,9 +184,7 @@ public class DeviceActivity extends FragmentActivity {
 //	    setTitle(mBtDevice.getName());
 	
 	    // Create GATT object
-    	mBtGatt = FizzlyBleService.getBtGatt();
-	    
-	    Log.i(TAG, "Gatt view ready");
+	    mBtGatt = BluetoothLeService.getBtGatt();
 	
 	    // Start service discovery
 	    if (!mServicesRdy && mBtGatt != null) {
@@ -371,28 +347,28 @@ public class DeviceActivity extends FragmentActivity {
 	  	@Override
 	  	public void onReceive(Context context, Intent intent) {
 	  		final String action = intent.getAction();
-	  		int status = intent.getIntExtra(FizzlyBleService.EXTRA_STATUS, BluetoothGatt.GATT_SUCCESS);
+	  		int status = intent.getIntExtra(BluetoothLeService.EXTRA_STATUS, BluetoothGatt.GATT_SUCCESS);
 	
-	  		if (FizzlyBleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+	  		if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 	  			if (status == BluetoothGatt.GATT_SUCCESS) {
 	  				displayServices();
 	  			} else {
 	  				Toast.makeText(getApplication(), "Service discovery failed", Toast.LENGTH_LONG).show();
 	  				return;
 	  			}
-	  		} else if (FizzlyBleService.ACTION_DATA_NOTIFY.equals(action)) {
+	  		} else if (BluetoothLeService.ACTION_DATA_NOTIFY.equals(action)) {
 	  			// Notification
-	  			byte[] value = intent.getByteArrayExtra(FizzlyBleService.EXTRA_DATA);
-	  			String uuidStr = intent.getStringExtra(FizzlyBleService.EXTRA_UUID);
+	  			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
 	  			onCharacteristicChanged(uuidStr, value);
-	  		} else if (FizzlyBleService.ACTION_DATA_WRITE.equals(action)) {
+	  		} else if (BluetoothLeService.ACTION_DATA_WRITE.equals(action)) {
 	  			// Data written
-	  			String uuidStr = intent.getStringExtra(FizzlyBleService.EXTRA_UUID);
+	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
 	  			onCharacteristicWrite(uuidStr,status);
-	  		} else if (FizzlyBleService.ACTION_DATA_READ.equals(action)) {
+	  		} else if (BluetoothLeService.ACTION_DATA_READ.equals(action)) {
 	  			// Data read
-	  			String uuidStr = intent.getStringExtra(FizzlyBleService.EXTRA_UUID);
-	  			byte  [] value = intent.getByteArrayExtra(FizzlyBleService.EXTRA_DATA);
+	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
+	  			byte  [] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
 	  			onCharacteristicsRead(uuidStr,value,status);
 	  		}
 	

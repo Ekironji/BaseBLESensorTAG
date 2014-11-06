@@ -23,13 +23,14 @@ public class TestFizzlyActivity extends FizzlyActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setGestureDetector(new GestureDetector(this));		
-		enableSensors(FizzlySensor.ACC_MAG_BUTT_BATT, FizzlySensor.GYROSCOPE);	
+		setGestureDetector(new GestureDetector(this));	
+		setSensorPeriod(100);
 		
 		// Gui custom settings
 		setContentView(R.layout.activity_device);	    
 	    getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_fizzly)));
-	    getActionBar().setIcon(android.R.color.transparent);	 
+	    getActionBar().setIcon(android.R.color.transparent);
+	    
 	    mFragmentView = new FizzlyViewFragment();
 	    
 	    if (savedInstanceState == null) {
@@ -37,8 +38,9 @@ public class TestFizzlyActivity extends FizzlyActivity{
 					.add(R.id.container, mFragmentView).commit();
 		}
 				
-		setGestureDetector(new GestureDetector(this));
-		
+	    
+	    
+	    
 		enableSensors(FizzlySensor.ACC_MAG_BUTT_BATT, FizzlySensor.GYROSCOPE);		
 
 		effects.add(new Effect(this, R.raw.drum_a_1));

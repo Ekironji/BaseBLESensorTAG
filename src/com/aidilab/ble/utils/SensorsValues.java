@@ -37,6 +37,11 @@ public class SensorsValues {
 	}
 
 
+	public Point3D getGyroscope() {
+		return gyroscope;
+	}
+	
+
 	public int getButton() {
 		return button;
 	}
@@ -54,10 +59,6 @@ public class SensorsValues {
 	public int getBatteryStatus() {
 		return batteryStatus;
 	}
-	
-	
-	
-	
-	
+
 	
 }

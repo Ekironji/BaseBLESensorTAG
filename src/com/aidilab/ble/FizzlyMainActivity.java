@@ -234,9 +234,8 @@ public class FizzlyMainActivity extends FragmentActivity {
 	}
 	
 	private void startDeviceActivity() {
-	    // mDeviceIntent = new Intent(this, DeviceActivity.class);
 		mDeviceIntent = new Intent(this, TestFizzlyActivity.class);
-	    mDeviceIntent.putExtra(DeviceActivity.EXTRA_DEVICE, mBluetoothDevice);
+	    mDeviceIntent.putExtra(TestFizzlyActivity.EXTRA_DEVICE, mBluetoothDevice);
 	    startActivityForResult(mDeviceIntent, REQ_DEVICE_ACT);
 	}
 	  

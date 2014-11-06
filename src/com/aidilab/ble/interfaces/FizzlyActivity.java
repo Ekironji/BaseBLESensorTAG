@@ -43,7 +43,8 @@ import com.aidilab.ble.utils.SensorsValues;
 
 public abstract class FizzlyActivity extends FragmentActivity{
 	
-	private static String TAG = "DeviceActivity";
+	private static String TAG = "FizzlyActivity";
+	
     final byte CHANGE_COLOR = 0x00;
     final byte BLINK 		= 0x01;
     
@@ -73,6 +74,9 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	
 	// Gesture Recognizer
 	protected GestureDetector mGestureDetector = null;
+	
+	// Sensors parameter
+	private int NOTIFICATIONS_PERIOD = 5;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -217,7 +221,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	  	// FIZZLY: se e' tutti i sensori ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ALL_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ALL_PERI);
-		  		value = (byte) 5;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo di tutti i sensori : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -227,7 +231,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ACC_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ACC_PERI);
-		  		value = (byte) 5;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -236,7 +240,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 			// FIZZLY: se e' magnetometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_MAG_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_MAG_PERI);
-		  		value = (byte) 10;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell magnetometro : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -245,7 +249,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 			// FIZZLY: se e' GIRO ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_GYR_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_GYR_PERI);
-		  		value = (byte) 5;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell GIROSCOPIO : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -254,7 +258,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 			// FIZZLY: se e' batteria
 			if (confUuid.equals(Fizzly.UUID_BAT_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_BAT_PERI);
-		  		value = (byte) 50;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell batteria : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -433,6 +437,11 @@ public abstract class FizzlyActivity extends FragmentActivity{
 		byte[] msg = {(byte)BEEPER_BLINK_MODE, (byte)tone, (byte)(millisPeriod/10), (byte)(beepNumber) };	
 
 		mBtLeService.writeCharacteristic(charac, msg);
+	}
+	
+	
+	public void setSensorPeriod(int millis){
+		NOTIFICATIONS_PERIOD = millis / 10;
 	}
 	
 	public void detectSequence(SensorsValues sv){

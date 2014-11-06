@@ -35,12 +35,10 @@
 package com.aidilab.ble.fragment;
 
 
-import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_ALL_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
 
 import java.text.DecimalFormat;
 
@@ -58,7 +56,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.aidilab.ble.DeviceActivity;
+import com.aidilab.ble.R;
+import com.aidilab.ble.interfaces.FizzlyActivity;
 import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
@@ -66,7 +65,6 @@ import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
 import com.aidilab.ble.sensor.gui.views.BarGraph3AxisView;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble.R;
 
 // Fragment for Device View
 public class DeviceViewFragment extends Fragment implements OnClickListener{
@@ -97,7 +95,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 
 	// House-keeping
 	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
-	private DeviceActivity mActivity;
+	private FizzlyActivity mActivity;
 	private static final double PA_PER_METER = 12.0;
 	
 	private boolean isMagnetometerBroken = true;
@@ -110,7 +108,7 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    Log.i(TAG, "onCreateView");
 	    mInstance = this;
-	    mActivity = (DeviceActivity) getActivity();
+	    mActivity = (FizzlyActivity) getActivity();
     
 	    // The last two arguments ensure LayoutParams are inflated properly.	    
 	    View view = inflater.inflate(R.layout.fragment_device, container, false);
@@ -171,16 +169,13 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   /**
    * Handle changes in sensor values
    * */
-  public void onCharacteristicChanged(String uuidStr, byte[] rawValue) {
+  public void onCharacteristicChanged(String uuidStr, SensorsValues sv) {
 		Point3D v;
-		SensorsValues sv;
 		String msg;
   		Integer button;
   		int batteryLevel;
 
-	if (uuidStr.equals(UUID_ALL_DATA.toString())) {
-  		sv = FizzlySensor.ACC_MAG_BUTT_BATT.unpack(rawValue);
-  		
+	if (uuidStr.equals(UUID_ALL_DATA.toString())) {  		
   		// accelerometro
   		msg = decimal.format(sv.getAccelerometer().x) + "\n" 
   				+ decimal.format(sv.getAccelerometer().y) + "\n" 
@@ -233,47 +228,35 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   		
   		mActivity.detectSequence(sv);
   	} 	
-		
-		
-  	if (uuidStr.equals(UUID_ACC_DATA.toString())) {
-  		v = FizzlySensor.ACCELEROMETER.convert(rawValue);
-  		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
-  		mAcc.setText(msg);
-  	} 
+  }
   
-  	if (uuidStr.equals(UUID_MAG_DATA.toString())) {
-  		v = FizzlySensor.MAGNETOMETER.convert(rawValue);
-  		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
-  		mMag.setText(msg);
-  	} 
+  public void onCharacteristicChanged(String uuidStr, byte[] rawValue) {
+		Point3D v;
+		String msg;
+		Integer button;
+		int batteryLevel;
+		
+		if (uuidStr.equals(UUID_GYR_DATA.toString())) {
+	  		v = FizzlySensor.GYROSCOPE.convert(rawValue);
+	  		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
+	  		//mGyr.setText(msg);
+	  		gyrBarGraph.setData(v.x, v.y, v.z);
+	  	} 
 
-  	if (uuidStr.equals(UUID_GYR_DATA.toString())) {
-  		v = FizzlySensor.GYROSCOPE.convert(rawValue);
-  		msg = decimal.format(v.x) + "\n" + decimal.format(v.y) + "\n" + decimal.format(v.z) + "\n";
-  		//mGyr.setText(msg);
-  		gyrBarGraph.setData(v.x, v.y, v.z);
-  	} 
-  	
-  	if (uuidStr.equals(UUID_BAT_DATA.toString())) {
-  		v = FizzlySensor.BATTERY.convert(rawValue);
-  		msg = "Voltage: "+ decimal.format(v.x) + "  Status: " + BatteryData.getBatteryAction((float)v.x, (int)v.y) + "\n";
-  		mBat.setText(msg);
-  	} 
-
-  	if (uuidStr.equals(UUID_KEY_DATA.toString())) {
-  		button = FizzlySensor.CAPACITIVE_BUTTON.convertKeys(rawValue);
-  		
-  		switch (button) {
-  		case 0:
-  			mBut.setText("released");
-  			break;
-  		case 1:
-  			mBut.setText("pressed");
-  			break;
-  		default:
-  			throw new UnsupportedOperationException();
-  		}
-  	}
+	  	if (uuidStr.equals(UUID_KEY_DATA.toString())) {
+	  		button = FizzlySensor.CAPACITIVE_BUTTON.convertKeys(rawValue);
+	  		
+	  		switch (button) {
+	  		case 0:
+	  			mBut.setText("released");
+	  			break;
+	  		case 1:
+	  			mBut.setText("pressed");
+	  			break;
+	  		default:
+	  			throw new UnsupportedOperationException();
+	  		}
+	  	}
   }
 
   

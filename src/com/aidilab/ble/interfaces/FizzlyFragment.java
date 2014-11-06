@@ -39,8 +39,8 @@ public abstract class FizzlyFragment extends Fragment implements OnClickListener
 //	    return view;
 //	}
 		
-	public abstract void onCharatonCharacteristicChanged(String uuidStr, byte[] rawValue);
-	public abstract void onCharatonCharacteristicChanged(String uuidStr, SensorsValues sv);
+	public abstract void onCharacteristicChanged(String uuidStr, byte[] rawValue);
+	public abstract void onCharacteristicChanged(String uuidStr, SensorsValues sv);
 	public abstract void onGestureDetected(int gestureId);
 
 }

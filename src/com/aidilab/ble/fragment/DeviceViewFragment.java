@@ -283,8 +283,10 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
   HSVColorPickerDialog cpd;
 	@Override
 	public void onClick(View v) {
-		switch(v.getId()){
-		case R.id.rgbLayout:
+		
+		int id = v.getId();
+		
+		if(id == R.id.rgbLayout){
 			cpd = new HSVColorPickerDialog(mActivity, lastColorSelected, new OnColorSelectedListener() {
 			    @Override
 			    public void colorSelected(Integer color) {
@@ -297,8 +299,8 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 			});
 			cpd.setTitle( "Pick a color" );
 			cpd.show();			
-			break;		
-		case R.id.rgbButton:
+		}	
+		else if(id == R.id.rgbButton){
 			cpd = new HSVColorPickerDialog(mActivity, lastColorSelected, new OnColorSelectedListener() {
 			    @Override
 			    public void colorSelected(Integer color) {
@@ -311,18 +313,17 @@ public class DeviceViewFragment extends Fragment implements OnClickListener{
 			});
 			cpd.setTitle( "Pick a color" );
 			cpd.show();			
-			break;		
-		case R.id.highToneButton:
+		}	
+		else if(id == R.id.highToneButton){
 			mActivity.playBeepSequence(mActivity.BEEPER_TONE_HIGH, 100, 5);
 			Log.i("ScanViewFragmanet.onClick()", "high");
-			break;
-		case R.id.lowToneButton:
+		}
+		else if(id == R.id.lowToneButton){
 			mActivity.playBeepSequence(mActivity.BEEPER_TONE_LOW,  100, 5);
 			Log.i("ScanViewFragmanet.onClick()", "low");
-			break;
-		default:
-			break;
 		}
+		else {}
+		
 	}
 
   

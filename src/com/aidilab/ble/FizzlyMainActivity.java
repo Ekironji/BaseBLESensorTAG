@@ -139,20 +139,24 @@ public class FizzlyMainActivity extends FragmentActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		
+		int id = item.getItemId();
+		
+		if(id == android.R.id.home){
 		    onBackPressed();
 		    return true;
-		case R.id.action_settings:
+		}
+		else if(id == R.id.action_settings){
 			return true;
-		case R.id.opt_bt:
+		}
+		else if(id == R.id.opt_bt){
 			Intent settingsIntent = new Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
 		    startActivity(settingsIntent);
-		    break;
-		case R.id.opt_exit:
+		}
+		else if(id == R.id.opt_exit){
 			finish();
-		    break;
-		default:
+		}
+		else{
 		    return super.onOptionsItemSelected(item);
 		}
 		return true;

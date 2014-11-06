@@ -115,8 +115,8 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){			
-		case R.id.rgbButton:			
-			break;		
+//		case R.id.rgbButton:			
+//			break;		
 		default:
 			break;
 		}

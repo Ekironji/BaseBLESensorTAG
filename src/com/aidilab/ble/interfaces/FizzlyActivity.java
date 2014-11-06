@@ -22,7 +22,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -32,9 +31,6 @@ import android.widget.Toast;
 
 import com.aidilab.ble.R;
 import com.aidilab.ble.common.GattInfo;
-import com.aidilab.ble.fragment.FizzlyViewFragment;
-import com.aidilab.ble.gesture.GestureDetector;
-import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.Fizzly;
 import com.aidilab.ble.sensor.FizzlyBleService;
 import com.aidilab.ble.sensor.FizzlySensor;
@@ -323,9 +319,9 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	// Arrivano i dati dal sensore
 
 	public void onCharacteristicChanged(String uuidStr, byte[] rawValue) {
-		Point3D           v;
-		SensorsValues    sv;
-	  	Integer buttonState;
+		Point3D           v = null;
+		SensorsValues    sv = null;
+	  	Integer buttonState = null;
 		
 	  	// Process sensor packet
 	  	if (uuidStr.equals(UUID_ALL_DATA.toString())) {
@@ -445,7 +441,9 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	}
 	
 	public void detectSequence(SensorsValues sv){
-		mGestureDetector.detectGesture(sv);
+		if (sv != null) {
+			mGestureDetector.detectGesture(sv);
+		}
 	}
 	
 	// Settings methods	

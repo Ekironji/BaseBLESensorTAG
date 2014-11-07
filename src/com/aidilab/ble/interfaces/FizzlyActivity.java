@@ -361,7 +361,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	  		default:
 	  			throw new UnsupportedOperationException();
 	  		}
-	  	}
+	  	} 
 	}
 	
 
@@ -441,7 +441,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	}
 	
 	public void detectSequence(SensorsValues sv){
-		if (sv != null) {
+		if (sv != null && mGestureDetector != null) {
 			mGestureDetector.detectGesture(sv);
 		}
 	}
@@ -461,5 +461,6 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	
 	// Abstracts Methods
 	public abstract void onGestureDetected(int gestureId);
+	
 
 }

@@ -123,9 +123,9 @@ public enum FizzlySensor {
     @Override
     public Point3D convert(final byte [] value) {
 
-      float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 8.75F;
-  	  float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 8.75F;
-  	  float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 8.75F;
+      float x = (float) ((short) ((value[0] << 8) | (value[1] & 0xff))) / 875F;
+  	  float y = (float) ((short) ((value[2] << 8) | (value[3] & 0xff))) / 875F;
+  	  float z = (float) ((short) ((value[4] << 8) | (value[5] & 0xff))) / 875F;
       
       return new Point3D(x, y, z);      
     }

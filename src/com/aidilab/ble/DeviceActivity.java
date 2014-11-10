@@ -51,6 +51,7 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -59,13 +60,14 @@ import android.widget.Toast;
 
 import com.aidilab.ble.common.GattInfo;
 import com.aidilab.ble.fragment.DeviceViewFragment;
+import com.aidilab.ble.fragment.DrumSimpleFragment;
 import com.aidilab.ble.fragment.FizzlyViewFragment;
 import com.aidilab.ble.gesture.GestureDetectorAlpha;
 import com.aidilab.ble.sensor.BluetoothLeService;
 import com.aidilab.ble.sensor.Fizzly;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 
 public class DeviceActivity extends FragmentActivity {
 	// Log
@@ -84,7 +86,7 @@ public class DeviceActivity extends FragmentActivity {
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	
 	//private DeviceViewFragment mDeviceView         = null;
-	private FizzlyViewFragment mDeviceView = null;
+	private DrumSimpleFragment mDeviceView = null;
 
 	// BLE
 	private BluetoothLeService         mBtLeService     = null;
@@ -116,7 +118,7 @@ public class DeviceActivity extends FragmentActivity {
 	    
 	    // GUI - choosing fragment 
 	    //mDeviceView = new DeviceViewFragment();
-	    mDeviceView = new FizzlyViewFragment();
+	    mDeviceView = new DrumSimpleFragment();
 	    
 	    if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -145,6 +147,10 @@ public class DeviceActivity extends FragmentActivity {
 //	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
 	    
 	    mGestureDetector = new GestureDetectorAlpha(this);
+	}
+	
+	public Fragment getFragment(){
+		return mDeviceView;
 	}
 
 	@Override
@@ -185,7 +191,7 @@ public class DeviceActivity extends FragmentActivity {
 	    Log.d(TAG, "Gatt view ready");
 	
 	    // Set title bar to device name
-//	    setTitle(mBtDevice.getName());
+	    setTitle("Drum");
 	
 	    // Create GATT object
 	    mBtGatt = BluetoothLeService.getBtGatt();

@@ -2,12 +2,12 @@ package com.aidilab.ble.gesture;
 
 import java.util.ArrayList;
 
-import android.bluetooth.BluetoothClass.Device;
 import android.content.Context;
 import android.graphics.Color;
 
-import com.aidilab.ble2.R;
 import com.aidilab.ble.DeviceActivity;
+import com.aidilab.ble.R;
+import com.aidilab.ble.fragment.DrumSimpleFragment;
 import com.aidilab.ble.utils.Effect;
 import com.aidilab.ble.utils.SensorsValues;
 
@@ -47,16 +47,19 @@ public class GestureDetectorAlpha {
 				effects.get(0).play();
 				mDeviceActivity.playColorBlink(200, 1 , Color.RED);
 				cycles = CYCLE_LIMIT;
+				((DrumSimpleFragment)mDeviceActivity.getFragment()).startDownAnimation();
 			}
 			else if (sv.getAccelerometer().y > 17) {
 				effects.get(1).play();
 				mDeviceActivity.playColorBlink(200, 1 , Color.GREEN);
 				cycles = CYCLE_LIMIT;
+				((DrumSimpleFragment)mDeviceActivity.getFragment()).startLeftAnimation();
 			}
 			else if (sv.getAccelerometer().y < -17) {
 				effects.get(2).play();
 				mDeviceActivity.playColorBlink(200, 1 ,Color.BLUE);
 				cycles = CYCLE_LIMIT;
+				((DrumSimpleFragment)mDeviceActivity.getFragment()).startRightAnimation();
 			}
 		}
 	}

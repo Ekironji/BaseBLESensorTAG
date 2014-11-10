@@ -66,7 +66,7 @@ import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
 import com.aidilab.ble.sensor.gui.views.BarGraph3AxisView;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 
 // Fragment for Device View
 public class DeviceViewFragment extends Fragment implements OnClickListener{

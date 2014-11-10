@@ -56,7 +56,7 @@ import com.aidilab.ble.FizzlyMainActivity;
 import com.aidilab.ble.common.BleDeviceInfo;
 import com.aidilab.ble.utils.CustomTimer;
 import com.aidilab.ble.utils.CustomTimerCallback;
-import com.aidilab.ble2.R;
+import com.aidilab.ble.R;
 
 public class ScanViewFragment extends Fragment {
   private static final String TAG = "ScanViewFragment";

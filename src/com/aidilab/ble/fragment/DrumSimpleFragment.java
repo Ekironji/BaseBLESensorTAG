@@ -41,47 +41,43 @@ import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
-
-import java.text.DecimalFormat;
-
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aidilab.ble.DeviceActivity;
+import com.aidilab.ble.R;
 import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.FizzlySensor;
-import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
-import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
-import com.aidilab.ble.sensor.gui.views.BarGraph3AxisView;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
-import com.aidilab.ble.R;
 
 // Empty Fragment for Fizzly Device View
-public class FizzlyViewFragment extends Fragment implements OnClickListener{
+public class DrumSimpleFragment extends Fragment{
 	
-	private static final String TAG = "FizzlyViewFragment";
+	private static final String TAG = "DrumSimpleFragment";
 	
-	public static FizzlyViewFragment mInstance = null;
+	public static DrumSimpleFragment mInstance = null;
 	
 	// Views elements
 	private TextView mStatus;
-	
-	// House-keeping
-	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
+	private ImageView fizzlyImage;
 	private DeviceActivity mActivity;
 	
+	TranslateAnimation leftAnimation;
+	TranslateAnimation rightAnimation;
+	TranslateAnimation downAnimation;
+	
+	int count = 0;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,27 +86,70 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
 	    mActivity = (DeviceActivity) getActivity();
     
 	    // The last two arguments ensure LayoutParams are inflated properly.	    
-	    View view = inflater.inflate(R.layout.fragment_device, container, false);
+	    View view = inflater.inflate(R.layout.fragment_drumsimple, container, false);
 	    	
-	    /** 
-	     *  GUI initialization
-	     */
-		//	    mStatus    = (TextView) view.findViewById(R.id.status);
-		//	    mRgbButton = (ImageButton) view.findViewById(R.id.rgbButton);	    
-		//	    mRgbButton.setOnClickListener(this);	    
-		//	 
-		//	    accBarGraph = (BarGraph3AxisView) view.findViewById(R.id.accBarGraph);
-		//	    accBarGraph.setRange(30);
-		//	    accBarGraph.setBarColors(Color.RED, Color.GREEN, Color.BLUE);
+		//	    mStatus    = (TextView) view.findViewById(R.id.status); 
+	    fizzlyImage = (ImageView) view.findViewById(R.id.imageViewFizzly);
+//	    fizzlyImage.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				
+//				switch(count){
+//				case 0:
+//					Log.i(TAG, "0 left");
+//					startLeftAnimation();
+//					count++;
+//					break;
+//				case 1:
+//					Log.i(TAG, "1 right");
+//					startRightAnimation();
+//					count++;
+//					break;
+//				case 2:
+//					Log.i(TAG, "2 down");
+//					startDownAnimation();
+//					count=0;
+//					break;
+//				}
+//			}
+//		});
 	    
+	    leftAnimation = new TranslateAnimation(0f, -180F, 0f, 0f);
+	    leftAnimation.setDuration(250);
+//	    leftAnimation.setInterpolator(new BounceInterpolator());
 	    
+	    rightAnimation = new TranslateAnimation(0f, 180F, 0f, 0f);
+	    rightAnimation.setDuration(250);
+//	    rightAnimation.setInterpolator(new BounceInterpolator());
+	    
+	    downAnimation = new TranslateAnimation(0f, 0F, 0f, 200f);
+	    downAnimation.setDuration(250);
+//	    downAnimation.setInterpolator(new BounceInterpolator());
 	    
 	    // Notify activity that UI has been inflated
 	    mActivity.onViewInflated(view);
 	
 	    return view;
 	}
+	
+	private int getDisplayHeight() {
+		DisplayMetrics metrics = new DisplayMetrics();
+		mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		return metrics.widthPixels;
+	}
+	
+	public void startLeftAnimation(){
+		fizzlyImage.startAnimation(leftAnimation);
+	}
 
+	public void startRightAnimation(){
+		fizzlyImage.startAnimation(rightAnimation);
+	}
+	
+	public void startDownAnimation(){
+		fizzlyImage.startAnimation(downAnimation);
+	}
 
 	@Override
 	public void onResume() {
@@ -122,7 +161,7 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
     public void onPause() {
 		super.onPause();
 	}
-
+	
 	/**
 	 * Handle changes in sensor values
 	 * */
@@ -198,34 +237,6 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
 //	  	mStatus.setText(txt);
 //	  	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Failure);
 	}
-	
-	void setBusy(boolean f) {
-//	  	if (f)
-//	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle_Busy);
-//	  	else
-//	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle);  		
-	}
-
-  
-    private int lastColorSelected = Color.BLACK;
-  
-    HSVColorPickerDialog mColorPickerDialog;
-  
-    // Manage GUI touch event
-	@Override
-	public void onClick(View v) {
-		switch(v.getId()){			
-		case R.id.rgbButton:
-			mActivity.playColor(500, lastColorSelected);	
-			break;		
-		case R.id.highToneButton:
-			mActivity.playBeepSequence(DeviceActivity.BEEPER_TONE_HIGH, 100, 5);
-			break;
-		default:
-			break;
-		}
-	}
-
-  
+ 
   
 }

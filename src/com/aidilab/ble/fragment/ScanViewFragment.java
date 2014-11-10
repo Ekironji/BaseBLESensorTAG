@@ -36,7 +36,6 @@ package com.aidilab.ble.fragment;
 
 import java.util.List;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,17 +51,17 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.aidilab.ble.FizzlyMainActivity;
+import com.aidilab.ble.R;
 import com.aidilab.ble.common.BleDeviceInfo;
+import com.aidilab.ble.interfaces.FizzlyDeviceScanActivity;
 import com.aidilab.ble.utils.CustomTimer;
 import com.aidilab.ble.utils.CustomTimerCallback;
-import com.aidilab.ble.R;
 
 public class ScanViewFragment extends Fragment {
   private static final String TAG = "ScanViewFragment";
   private final int SCAN_TIMEOUT = 10; // Seconds
   private final int CONNECT_TIMEOUT = 10; // Seconds
-  private FizzlyMainActivity mActivity = null;
+  private FizzlyDeviceScanActivity mActivity = null;
 
   private DeviceListAdapter mDeviceAdapter = null;
   private TextView mEmptyMsg;
@@ -83,7 +82,7 @@ public class ScanViewFragment extends Fragment {
     // The last two arguments ensure LayoutParams are inflated properly.
     View view = inflater.inflate(R.layout.fragment_scan, container, false);
 
-    mActivity = (FizzlyMainActivity) getActivity();
+    mActivity = (FizzlyDeviceScanActivity) getActivity();
     mContext = mActivity.getApplicationContext();
 
     // Initialize widgets
@@ -99,7 +98,9 @@ public class ScanViewFragment extends Fragment {
     mProgressBar.setMax(SCAN_TIMEOUT);
 
     // Alert parent activity
-    mActivity.onScanViewReady(view);
+//    mActivity.onScanViewReady(view);
+    Log.i("BLEfromsensorTag","ScanViewFragment() - chiamo mActivity.onScanViewReady(view);");
+    
 
     return view;
   }

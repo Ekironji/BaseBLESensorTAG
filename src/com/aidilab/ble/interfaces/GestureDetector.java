@@ -2,7 +2,6 @@ package com.aidilab.ble.interfaces;
 
 import android.content.Context;
 
-import com.aidilab.ble.interfaces.FizzlyActivity;
 import com.aidilab.ble.utils.SensorsValues;
 
 public abstract class GestureDetector {

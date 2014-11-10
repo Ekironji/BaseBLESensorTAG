@@ -36,8 +36,6 @@ package com.aidilab.ble.sensor;
 
 import java.util.List;
 
-import com.aidilab.ble.common.GattInfo;
-
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -53,6 +51,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.aidilab.ble.common.GattInfo;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a given Bluetooth LE device.

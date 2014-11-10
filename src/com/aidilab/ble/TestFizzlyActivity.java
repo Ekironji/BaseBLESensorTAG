@@ -10,7 +10,6 @@ import com.aidilab.ble.gesture.GestureDetector;
 import com.aidilab.ble.interfaces.FizzlyActivity;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.utils.Effect;
-import com.aidilab.ble.utils.SensorsValues;
 
 public class TestFizzlyActivity extends FizzlyActivity{
 

@@ -23,7 +23,6 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -32,23 +31,13 @@ import android.widget.Toast;
 
 import com.aidilab.ble.R;
 import com.aidilab.ble.common.GattInfo;
-<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
-import com.aidilab.ble.fragment.DeviceViewFragment;
 import com.aidilab.ble.fragment.DrumSimpleFragment;
-import com.aidilab.ble.fragment.FizzlyViewFragment;
-import com.aidilab.ble.gesture.GestureDetectorAlpha;
-import com.aidilab.ble.sensor.BluetoothLeService;
-=======
->>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 import com.aidilab.ble.sensor.Fizzly;
 import com.aidilab.ble.sensor.FizzlyBleService;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
-<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
-import com.aidilab.ble.R;
-=======
->>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
+
 
 public abstract class FizzlyActivity extends FragmentActivity{
 	
@@ -66,13 +55,10 @@ public abstract class FizzlyActivity extends FragmentActivity{
 
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
-	
-<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
+
 	//private DeviceViewFragment mDeviceView         = null;
 	private DrumSimpleFragment mDeviceView = null;
 
-=======
->>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	// BLE
 	private FizzlyBleService           mBtLeService     = null;
 	private BluetoothDevice            mBtDevice        = null;
@@ -98,21 +84,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 	    
-<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
-	    getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_fizzly)));
-	    getActionBar().setIcon(android.R.color.transparent);
-	    
-	    // GUI - choosing fragment 
-	    //mDeviceView = new DeviceViewFragment();
-	    mDeviceView = new DrumSimpleFragment();
-	    
-	    if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, mDeviceView).commit();
-		}
-=======
 	    Intent intent = getIntent();
->>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	    
 	    // BLE
 	    mBtLeService = FizzlyBleService.getInstance();
@@ -128,13 +100,7 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	    mEnabledSensors.clear();
 	}
 	
-<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
-	public Fragment getFragment(){
-		return mDeviceView;
-	}
 
-=======
->>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	@Override
 	public void onDestroy() {
 	    super.onDestroy();
@@ -172,12 +138,6 @@ public abstract class FizzlyActivity extends FragmentActivity{
 	public void onViewInflated(View view) {
 	    Log.d(TAG, "Gatt view ready");
 	
-<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
-	    // Set title bar to device name
-	    setTitle("Drum");
-	
-=======
->>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	    // Create GATT object
 	    mBtGatt = FizzlyBleService.getBtGatt();
 	

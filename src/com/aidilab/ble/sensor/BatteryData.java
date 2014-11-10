@@ -1,6 +1,5 @@
 package com.aidilab.ble.sensor;
 
-import android.util.Log;
 
 public class BatteryData {
 	

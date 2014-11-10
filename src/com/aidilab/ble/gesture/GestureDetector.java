@@ -1,7 +1,5 @@
 package com.aidilab.ble.gesture;
 
-import android.content.Context;
-
 import com.aidilab.ble.interfaces.FizzlyActivity;
 import com.aidilab.ble.utils.SensorsValues;
 

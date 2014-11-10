@@ -35,16 +35,6 @@
 package com.aidilab.ble.fragment;
 
 
-import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_ALL_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
-import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
-
-import java.text.DecimalFormat;
-
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -52,21 +42,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.aidilab.ble.DeviceActivity;
-import com.aidilab.ble.sensor.BatteryData;
-import com.aidilab.ble.sensor.FizzlySensor;
-import com.aidilab.ble.sensor.gui.HSVColorPickerDialog;
-import com.aidilab.ble.sensor.gui.HSVColorPickerDialog.OnColorSelectedListener;
-import com.aidilab.ble.sensor.gui.views.BarGraph3AxisView;
-import com.aidilab.ble.utils.Point3D;
-import com.aidilab.ble.utils.SensorsValues;
 import com.aidilab.ble.R;
+import com.aidilab.ble.interfaces.FizzlyActivity;
 
 // Empty Fragment for Fizzly Device View
 public class FizzlyViewFragment extends Fragment implements OnClickListener{
@@ -75,19 +53,13 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
 	
 	public static FizzlyViewFragment mInstance = null;
 	
-	// Views elements
-	private TextView mStatus;
-	
-	// House-keeping
-	private DecimalFormat decimal = new DecimalFormat("+0.00;-0.00");
-	private DeviceActivity mActivity;
-	
+	private FizzlyActivity mActivity;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    Log.i(TAG, "onCreateView");
 	    mInstance = this;
-	    mActivity = (DeviceActivity) getActivity();
+	    mActivity = (FizzlyActivity) getActivity();
     
 	    // The last two arguments ensure LayoutParams are inflated properly.	    
 	    View view = inflater.inflate(R.layout.fragment_device, container, false);
@@ -127,100 +99,16 @@ public class FizzlyViewFragment extends Fragment implements OnClickListener{
 	 * Handle changes in sensor values
 	 * */
 	public void onCharacteristicChanged(String uuidStr, byte[] rawValue) {
-		Point3D           v;
-		SensorsValues    sv;
-	  	Integer buttonState;
-	  	int    batteryLevel;
-		
-	  	// Process sensor packet
-	  	if (uuidStr.equals(UUID_ALL_DATA.toString())) {
-
-		    Log.v(TAG, "onCharacteristicChanged() - packettone");
-		    
-		  	sv = FizzlySensor.ACC_MAG_BUTT_BATT.unpack(rawValue);
-		  	batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryLevel());
-		
-		  	buttonState = sv.getButton();		
-		  	switch (buttonState) {
-		  		case 0:
-		  			// Log.i("", "released");
-		  			break;
-		  		case 1:
-		  			Log.i("", "pressed");
-		  			break;
-		  		default:
-		  			throw new UnsupportedOperationException();
-		  	}
-		  	
-		  	// Send data to gesture Recognizer
-		  	mActivity.detectSequence(sv);
-	  	} 	
-				
-	  	if (uuidStr.equals(UUID_ACC_DATA.toString())) {
-	  		v = FizzlySensor.ACCELEROMETER.convert(rawValue);
-	  	} 
-	  
-	  	if (uuidStr.equals(UUID_MAG_DATA.toString())) {
-	  		v = FizzlySensor.MAGNETOMETER.convert(rawValue);
-	  	} 
 	
-	  	if (uuidStr.equals(UUID_GYR_DATA.toString())) {
-	  		v = FizzlySensor.GYROSCOPE.convert(rawValue);
-	  	} 
-	  	
-	  	if (uuidStr.equals(UUID_BAT_DATA.toString())) {
-	  		v = FizzlySensor.BATTERY.convert(rawValue);
-	  	} 
-	
-	  	if (uuidStr.equals(UUID_KEY_DATA.toString())) {
-	  		buttonState = FizzlySensor.CAPACITIVE_BUTTON.convertKeys(rawValue);
-	  		
-	  		switch (buttonState) {
-	  		case 0:
-	  			//Log.i("", "released");
-	  			break;
-	  		case 1:
-	  			Log.i("", "pressed");
-	  			break;
-	  		default:
-	  			throw new UnsupportedOperationException();
-	  		}
-	  	}
 	}
 
  
-	public void setStatus(String txt) {
-//	  	mStatus.setText(txt);
-//	  	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Success);
-	}
-	
-	public void setError(String txt) {
-//	  	mStatus.setText(txt);
-//	  	mStatus.setTextAppearance(mActivity, R.style.statusStyle_Failure);
-	}
-	
-	void setBusy(boolean f) {
-//	  	if (f)
-//	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle_Busy);
-//	  	else
-//	  		mStatus.setTextAppearance(mActivity, R.style.statusStyle);  		
-	}
-
-  
-    private int lastColorSelected = Color.BLACK;
-  
-    HSVColorPickerDialog mColorPickerDialog;
-  
     // Manage GUI touch event
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){			
-		case R.id.rgbButton:
-			mActivity.playColor(500, lastColorSelected);	
-			break;		
-		case R.id.highToneButton:
-			mActivity.playBeepSequence(DeviceActivity.BEEPER_TONE_HIGH, 100, 5);
-			break;
+//		case R.id.rgbButton:	
+//			break;		
 		default:
 			break;
 		}

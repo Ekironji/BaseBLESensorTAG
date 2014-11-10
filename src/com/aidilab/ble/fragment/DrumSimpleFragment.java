@@ -43,19 +43,15 @@ import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
 import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.aidilab.ble.DeviceActivity;
 import com.aidilab.ble.R;
+import com.aidilab.ble.interfaces.FizzlyActivity;
 import com.aidilab.ble.sensor.BatteryData;
 import com.aidilab.ble.sensor.FizzlySensor;
 import com.aidilab.ble.utils.Point3D;
@@ -69,9 +65,8 @@ public class DrumSimpleFragment extends Fragment{
 	public static DrumSimpleFragment mInstance = null;
 	
 	// Views elements
-	private TextView mStatus;
 	private ImageView fizzlyImage;
-	private DeviceActivity mActivity;
+	private FizzlyActivity mActivity;
 	
 	TranslateAnimation leftAnimation;
 	TranslateAnimation rightAnimation;
@@ -83,7 +78,7 @@ public class DrumSimpleFragment extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    Log.i(TAG, "onCreateView");
 	    mInstance = this;
-	    mActivity = (DeviceActivity) getActivity();
+	    mActivity = (FizzlyActivity) getActivity();
     
 	    // The last two arguments ensure LayoutParams are inflated properly.	    
 	    View view = inflater.inflate(R.layout.fragment_drumsimple, container, false);
@@ -133,12 +128,6 @@ public class DrumSimpleFragment extends Fragment{
 	    return view;
 	}
 	
-	private int getDisplayHeight() {
-		DisplayMetrics metrics = new DisplayMetrics();
-		mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		return metrics.widthPixels;
-	}
-	
 	public void startLeftAnimation(){
 		fizzlyImage.startAnimation(leftAnimation);
 	}
@@ -177,7 +166,7 @@ public class DrumSimpleFragment extends Fragment{
 		    Log.v(TAG, "onCharacteristicChanged() - packettone");
 		    
 		  	sv = FizzlySensor.ACC_MAG_BUTT_BATT.unpack(rawValue);
-		  	batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryLevel());
+		  	batteryLevel = BatteryData.getBatteryPercentage(sv.getBatteryVoltage());
 		
 		  	buttonState = sv.getButton();		
 		  	switch (buttonState) {

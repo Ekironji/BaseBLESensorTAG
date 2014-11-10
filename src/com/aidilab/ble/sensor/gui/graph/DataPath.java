@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.graphics.Color;
 import android.graphics.Point;
-import android.util.Log;
 
 public class DataPath {
 

@@ -1,38 +1,11 @@
-/**************************************************************************************************
-  Filename:       DeviceActivity.java
-  Revised:        $Date: 2013-09-05 07:58:48 +0200 (to, 05 sep 2013) $
-  Revision:       $Revision: 27616 $
+package com.aidilab.ble.interfaces;
 
-  Copyright 2013 Texas Instruments Incorporated. All rights reserved.
- 
-  IMPORTANT: Your use of this Software is limited to those specific rights
-  granted under the terms of a software license agreement between the user
-  who downloaded the software, his/her employer (which must be your employer)
-  and Texas Instruments Incorporated (the "License").  You may not use this
-  Software unless you agree to abide by the terms of the License. 
-  The License limits your use, and you acknowledge, that the Software may not be 
-  modified, copied or distributed unless used solely and exclusively in conjunction 
-  with a Texas Instruments Bluetooth device. Other than for the foregoing purpose, 
-  you may not use, reproduce, copy, prepare derivative works of, modify, distribute, 
-  perform, display or sell this Software and/or its documentation for any purpose.
- 
-  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED �AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
-  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
-  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
-  NEGLIGENCE, STRICT LIABILITY, CONTRIBUTION, BREACH OF WARRANTY, OR OTHER
-  LEGAL EQUITABLE THEORY ANY DIRECT OR INDIRECT DAMAGES OR EXPENSES
-  INCLUDING BUT NOT LIMITED TO ANY INCIDENTAL, SPECIAL, INDIRECT, PUNITIVE
-  OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF PROCUREMENT
-  OF SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
-  (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
- 
-  Should you have any questions regarding your right to use this Software,
-  contact Texas Instruments Incorporated at www.TI.com
-
- **************************************************************************************************/
-package com.aidilab.ble;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ACC_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_ALL_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_BAT_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_GYR_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_KEY_DATA;
+import static com.aidilab.ble.sensor.Fizzly.UUID_MAG_DATA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +22,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -58,20 +30,30 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.aidilab.ble.R;
 import com.aidilab.ble.common.GattInfo;
+<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
 import com.aidilab.ble.fragment.DeviceViewFragment;
 import com.aidilab.ble.fragment.DrumSimpleFragment;
 import com.aidilab.ble.fragment.FizzlyViewFragment;
 import com.aidilab.ble.gesture.GestureDetectorAlpha;
 import com.aidilab.ble.sensor.BluetoothLeService;
+=======
+>>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 import com.aidilab.ble.sensor.Fizzly;
+import com.aidilab.ble.sensor.FizzlyBleService;
 import com.aidilab.ble.sensor.FizzlySensor;
+import com.aidilab.ble.utils.Point3D;
 import com.aidilab.ble.utils.SensorsValues;
+<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
 import com.aidilab.ble.R;
+=======
+>>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 
-public class DeviceActivity extends FragmentActivity {
-	// Log
-	private static String TAG = "DeviceActivity";
+public abstract class FizzlyActivity extends FragmentActivity{
+	
+	private static String TAG = "FizzlyActivity";
+	
     final byte CHANGE_COLOR = 0x00;
     final byte BLINK 		= 0x01;
     
@@ -85,11 +67,14 @@ public class DeviceActivity extends FragmentActivity {
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	
+<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
 	//private DeviceViewFragment mDeviceView         = null;
 	private DrumSimpleFragment mDeviceView = null;
 
+=======
+>>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	// BLE
-	private BluetoothLeService         mBtLeService     = null;
+	private FizzlyBleService           mBtLeService     = null;
 	private BluetoothDevice            mBtDevice        = null;
 	private BluetoothGatt              mBtGatt          = null;
 	private List<BluetoothGattService> mServiceList     = null;
@@ -98,21 +83,22 @@ public class DeviceActivity extends FragmentActivity {
 	private boolean                    mIsReceiving     = false;
 
 	// SensorTag
-	private List<FizzlySensor>  mEnabledSensors = new ArrayList<FizzlySensor>();
-	private BluetoothGattService mOadService = null;
+	private List<FizzlySensor>   mEnabledSensors     = new ArrayList<FizzlySensor>();
+	private BluetoothGattService mOadService         = null;
 	private BluetoothGattService mConnControlService = null;
 	
 	// Gesture Recognizer
-	GestureDetectorAlpha mGestureDetector = null;
-  
-  
+	protected GestureDetector mGestureDetector = null;
+	
+	// Sensors parameter
+	private int NOTIFICATIONS_PERIOD = 5;
+	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-	    setContentView(R.layout.activity_device);
-	    super.onCreate(savedInstanceState);
-	    Intent intent = getIntent();
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 	    
+<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
 	    getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_fizzly)));
 	    getActionBar().setIcon(android.R.color.transparent);
 	    
@@ -124,9 +110,12 @@ public class DeviceActivity extends FragmentActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, mDeviceView).commit();
 		}
+=======
+	    Intent intent = getIntent();
+>>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	    
 	    // BLE
-	    mBtLeService = BluetoothLeService.getInstance();
+	    mBtLeService = FizzlyBleService.getInstance();
 	    mBtDevice = intent.getParcelableExtra(EXTRA_DEVICE);
 	    mServiceList = new ArrayList<BluetoothGattService>();
 	
@@ -135,24 +124,17 @@ public class DeviceActivity extends FragmentActivity {
 	    XmlResourceParser xpp = res.getXml(R.xml.gatt_uuid);
 	    new GattInfo(xpp);
 	    
-	    // Initialize sensor list
+	    // clear sensor list
 	    mEnabledSensors.clear();
-	    
-	    //es. ABILITARE UN SENSORE
-	    mEnabledSensors.add(FizzlySensor.ACC_MAG_BUTT_BATT);	
-	    mEnabledSensors.add(FizzlySensor.GYROSCOPE);	
-//	    mEnabledSensors.add(FizzlySensor.BATTERY);
-//	    mEnabledSensors.add(FizzlySensor.CAPACITIVE_BUTTON);
-//	    mEnabledSensors.add(FizzlySensor.ACCELEROMETER);
-//	    mEnabledSensors.add(FizzlySensor.MAGNETOMETER);        
-	    
-	    mGestureDetector = new GestureDetectorAlpha(this);
 	}
 	
+<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
 	public Fragment getFragment(){
 		return mDeviceView;
 	}
 
+=======
+>>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	@Override
 	public void onDestroy() {
 	    super.onDestroy();
@@ -180,21 +162,24 @@ public class DeviceActivity extends FragmentActivity {
 
 	private static IntentFilter makeGattUpdateIntentFilter() {
 	  	final IntentFilter fi = new IntentFilter();
-	  	fi.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
-	  	fi.addAction(BluetoothLeService.ACTION_DATA_NOTIFY);
-	  	fi.addAction(BluetoothLeService.ACTION_DATA_WRITE);
-	  	fi.addAction(BluetoothLeService.ACTION_DATA_READ);
+	  	fi.addAction(FizzlyBleService.ACTION_GATT_SERVICES_DISCOVERED);
+	  	fi.addAction(FizzlyBleService.ACTION_DATA_NOTIFY);
+	  	fi.addAction(FizzlyBleService.ACTION_DATA_WRITE);
+	  	fi.addAction(FizzlyBleService.ACTION_DATA_READ);
 	  	return fi;
 	}
 
 	public void onViewInflated(View view) {
 	    Log.d(TAG, "Gatt view ready");
 	
+<<<<<<< HEAD:src/com/aidilab/ble/DeviceActivity.java
 	    // Set title bar to device name
 	    setTitle("Drum");
 	
+=======
+>>>>>>> origin/master:src/com/aidilab/ble/interfaces/FizzlyActivity.java
 	    // Create GATT object
-	    mBtGatt = BluetoothLeService.getBtGatt();
+	    mBtGatt = FizzlyBleService.getBtGatt();
 	
 	    // Start service discovery
 	    if (!mServicesRdy && mBtGatt != null) {
@@ -246,16 +231,11 @@ public class DeviceActivity extends FragmentActivity {
 	    }
 	}
 
-	private void setError(String txt) {
-	  	if (mDeviceView != null)
-	  		mDeviceView.setError(txt);
-	}
-
-	private void setStatus(String txt) {
-	  	if (mDeviceView != null)
-	  		mDeviceView.setStatus(txt);
-	}
-
+	
+	private void setError(String txt) {}
+	private void setStatus(String txt) {}
+	
+	
 	private void enableSensors(boolean enable) {
 	  	for (FizzlySensor sensor : mEnabledSensors) {
 	  		UUID servUuid = sensor.getService();
@@ -283,7 +263,7 @@ public class DeviceActivity extends FragmentActivity {
 	  	// FIZZLY: se e' tutti i sensori ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ALL_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ALL_PERI);
-		  		value = (byte) 5;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo di tutti i sensori : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -293,7 +273,7 @@ public class DeviceActivity extends FragmentActivity {
 			// FIZZLY: se e' accelerometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_ACC_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_ACC_PERI);
-		  		value = (byte) 5;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell accelererometro : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -302,7 +282,7 @@ public class DeviceActivity extends FragmentActivity {
 			// FIZZLY: se e' magnetometro ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_MAG_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_MAG_PERI);
-		  		value = (byte) 10;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell magnetometro : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -311,7 +291,7 @@ public class DeviceActivity extends FragmentActivity {
 			// FIZZLY: se e' GIRO ne setto il periodo dopo averlo attivato
 			if (confUuid.equals(Fizzly.UUID_GYR_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_GYR_PERI);
-		  		value = (byte) 5;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell GIROSCOPIO : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
@@ -320,16 +300,12 @@ public class DeviceActivity extends FragmentActivity {
 			// FIZZLY: se e' batteria
 			if (confUuid.equals(Fizzly.UUID_BAT_CONF) && enable) {
 				charac = serv.getCharacteristic(Fizzly.UUID_BAT_PERI);
-		  		value = (byte) 50;
+		  		value = (byte) NOTIFICATIONS_PERIOD;
 		  		mBtLeService.writeCharacteristic(charac, value);
 		  		Log.i("DeviceActivity","Scrtitta la caratteristica del periodo dell batteria : " + value);
 				mBtLeService.waitIdle(GATT_TIMEOUT);
 			}
-			
-			
-		
 	  	}
-  	
 	}
 
 	private void enableNotifications(boolean enable) {
@@ -347,38 +323,32 @@ public class DeviceActivity extends FragmentActivity {
 	  	}
 	} 	
 	
-	public void calibrateHeight() {
-		//mHeightCalibrateRequest = true;		
-	}
-
-	
-	
 	private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
 	  	@Override
 	  	public void onReceive(Context context, Intent intent) {
 	  		final String action = intent.getAction();
-	  		int status = intent.getIntExtra(BluetoothLeService.EXTRA_STATUS, BluetoothGatt.GATT_SUCCESS);
+	  		int status = intent.getIntExtra(FizzlyBleService.EXTRA_STATUS, BluetoothGatt.GATT_SUCCESS);
 	
-	  		if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+	  		if (FizzlyBleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 	  			if (status == BluetoothGatt.GATT_SUCCESS) {
 	  				displayServices();
 	  			} else {
 	  				Toast.makeText(getApplication(), "Service discovery failed", Toast.LENGTH_LONG).show();
 	  				return;
 	  			}
-	  		} else if (BluetoothLeService.ACTION_DATA_NOTIFY.equals(action)) {
+	  		} else if (FizzlyBleService.ACTION_DATA_NOTIFY.equals(action)) {
 	  			// Notification
-	  			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
+	  			byte[] value = intent.getByteArrayExtra(FizzlyBleService.EXTRA_DATA);
+	  			String uuidStr = intent.getStringExtra(FizzlyBleService.EXTRA_UUID);
 	  			onCharacteristicChanged(uuidStr, value);
-	  		} else if (BluetoothLeService.ACTION_DATA_WRITE.equals(action)) {
+	  		} else if (FizzlyBleService.ACTION_DATA_WRITE.equals(action)) {
 	  			// Data written
-	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
+	  			String uuidStr = intent.getStringExtra(FizzlyBleService.EXTRA_UUID);
 	  			onCharacteristicWrite(uuidStr,status);
-	  		} else if (BluetoothLeService.ACTION_DATA_READ.equals(action)) {
+	  		} else if (FizzlyBleService.ACTION_DATA_READ.equals(action)) {
 	  			// Data read
-	  			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
-	  			byte  [] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+	  			String uuidStr = intent.getStringExtra(FizzlyBleService.EXTRA_UUID);
+	  			byte  [] value = intent.getByteArrayExtra(FizzlyBleService.EXTRA_DATA);
 	  			onCharacteristicsRead(uuidStr,value,status);
 	  		}
 	
@@ -393,16 +363,57 @@ public class DeviceActivity extends FragmentActivity {
 	}
 
 	// Arrivano i dati dal sensore
-	private void onCharacteristicChanged(String uuidStr, byte[] value) {
-		if (mDeviceView != null) {
-			mDeviceView.onCharacteristicChanged(uuidStr, value);
-		}
+
+	public void onCharacteristicChanged(String uuidStr, byte[] rawValue) {
+		Point3D           v = null;
+		SensorsValues    sv = null;
+	  	Integer buttonState = null;
+		
+	  	// Process sensor packet
+	  	if (uuidStr.equals(UUID_ALL_DATA.toString())) {
+	  		
+		  	sv = FizzlySensor.ACC_MAG_BUTT_BATT.unpack(rawValue);
+		  	
+		  	// Send data to gesture Recognizer
+		  	this.detectSequence(sv);
+	  	} 	
+				
+	  	if (uuidStr.equals(UUID_ACC_DATA.toString())) {
+	  		v = FizzlySensor.ACCELEROMETER.convert(rawValue);
+	  	} 
+	  
+	  	if (uuidStr.equals(UUID_MAG_DATA.toString())) {
+	  		v = FizzlySensor.MAGNETOMETER.convert(rawValue);
+	  	} 
+	
+	  	if (uuidStr.equals(UUID_GYR_DATA.toString())) {
+	  		v = FizzlySensor.GYROSCOPE.convert(rawValue);
+	  	} 
+	  	
+	  	if (uuidStr.equals(UUID_BAT_DATA.toString())) {
+	  		v = FizzlySensor.BATTERY.convert(rawValue);
+	  	} 
+	
+	  	if (uuidStr.equals(UUID_KEY_DATA.toString())) {
+	  		buttonState = FizzlySensor.CAPACITIVE_BUTTON.convertKeys(rawValue);
+	  		
+	  		switch (buttonState) {
+	  		case 0:
+	  			//Log.i("", "released");
+	  			break;
+	  		case 1:
+	  			Log.i("", "pressed");
+	  			break;
+	  		default:
+	  			throw new UnsupportedOperationException();
+	  		}
+	  	} 
 	}
+	
 
 	private void onCharacteristicsRead(String uuidStr, byte [] value, int status) {
 		Log.i(TAG, "onCharacteristicsRead: " + uuidStr);		
 	}
-
 	
 	// Action methods
 	public void playColor(int millis, int color){
@@ -441,6 +452,7 @@ public class DeviceActivity extends FragmentActivity {
 		mBtLeService.waitIdle(GATT_TIMEOUT);		
 	}
 	
+	
 	public void playBeepSequence(int tone, int millisPeriod, int beepNumber){
 		// abilito il servizio
 		BluetoothGattService serv = null;
@@ -469,8 +481,32 @@ public class DeviceActivity extends FragmentActivity {
 		mBtLeService.writeCharacteristic(charac, msg);
 	}
 	
-	public void detectSequence(SensorsValues sv){
-		mGestureDetector.detectGesture(sv);
+	
+	public void setSensorPeriod(int millis){
+		NOTIFICATIONS_PERIOD = millis / 10;
 	}
+	
+	public void detectSequence(SensorsValues sv){
+		if (sv != null && mGestureDetector != null) {
+			mGestureDetector.detectGesture(sv);
+		}
+	}
+	
+	// Settings methods	
+	protected void setGestureDetector(GestureDetector mGestureDetector){
+		this.mGestureDetector = mGestureDetector;
+	}
+	
+	protected void enableSensors(FizzlySensor... sensors){
+	    mEnabledSensors.clear();
+	    
+	    for(FizzlySensor fs : sensors){
+	    	mEnabledSensors.add(fs);
+	    }
+	}
+	
+	// Abstracts Methods
+	public abstract void onGestureDetected(int gestureId);
+	
 
 }

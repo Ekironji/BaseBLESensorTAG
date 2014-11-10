@@ -1,12 +1,14 @@
 package com.aidilab.ble.utils;
 
+import com.aidilab.ble.sensor.BatteryData;
+
 public class SensorsValues {
 	
 	private Point3D accelerometer = null;
 	private Point3D magnetometer  = null;
 	private Point3D gyroscope     = null;
 	private int button = 0;
-	float batteryLevel   = 0;
+	float batteryVoltage   = 0;
 	int batteryStatus  = 0;
 	
 	
@@ -20,7 +22,7 @@ public class SensorsValues {
 		this.magnetometer  = new Point3D(magX, magY, magZ);
 		this.gyroscope  = new Point3D(gyrX, gyrY, gyrZ);
 		this.button = button;
-		this.batteryLevel = batteryLevel;
+		this.batteryVoltage = batteryLevel;
 		this.batteryStatus = batteryStatus;
 	}
 
@@ -35,23 +37,28 @@ public class SensorsValues {
 	}
 
 
+	public Point3D getGyroscope() {
+		return gyroscope;
+	}
+	
+
 	public int getButton() {
 		return button;
 	}
 
 
-	public float getBatteryLevel() {
-		return batteryLevel;
+	public float getBatteryVoltage() {
+		return batteryVoltage;
+	}
+	
+	public float getBatteryPercentage(){
+		return BatteryData.getBatteryPercentage(batteryVoltage);
 	}
 
 
 	public int getBatteryStatus() {
 		return batteryStatus;
 	}
-	
-	
-	
-	
-	
+
 	
 }

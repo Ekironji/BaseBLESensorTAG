@@ -36,7 +36,9 @@ package com.aidilab.ble.fragment;
 
 import java.util.List;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -47,6 +49,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -58,8 +61,11 @@ import com.aidilab.ble.utils.CustomTimer;
 import com.aidilab.ble.utils.CustomTimerCallback;
 
 public class ScanViewFragment extends Fragment {
+	
+  private int[] bgTilesColors = {Color.RED, Color.YELLOW, Color.BLUE, Color.CYAN, Color.GREEN};		
+	
   private static final String TAG = "ScanViewFragment";
-  private final int SCAN_TIMEOUT = 10; // Seconds
+  private final int SCAN_TIMEOUT    = 10; // Seconds
   private final int CONNECT_TIMEOUT = 10; // Seconds
   private FizzlyDeviceScanActivity mActivity = null;
 
@@ -86,8 +92,8 @@ public class ScanViewFragment extends Fragment {
     mContext = mActivity.getApplicationContext();
 
     // Initialize widgets
-    mStatus = (TextView) view.findViewById(R.id.status);
-    mBtnScan = (Button) view.findViewById(R.id.btn_scan);
+    mStatus         = (TextView) view.findViewById(R.id.status);
+    mBtnScan        = (Button) view.findViewById(R.id.btn_scan);
     mDeviceListView = (GridView) view.findViewById(R.id.device_list);
     mDeviceListView.setClickable(true);
     mDeviceListView.setOnItemClickListener(mDeviceClickListener);
@@ -101,7 +107,6 @@ public class ScanViewFragment extends Fragment {
 //    mActivity.onScanViewReady(view);
     Log.i("BLEfromsensorTag","ScanViewFragment() - chiamo mActivity.onScanViewReady(view);");
     
-
     return view;
   }
 
@@ -264,11 +269,17 @@ public class ScanViewFragment extends Fragment {
 
       }
 
-//      BleDeviceInfo deviceInfo = mDevices.get(position);
-//      BluetoothDevice device = deviceInfo.getBluetoothDevice();
-//      int rssi = deviceInfo.getRssi();
-//      String descr = "John" + " name:" + device.getName() + "\nRssi: " + rssi + " dBm";
-//      ((TextView) vg.findViewById(R.id.fizzlyName)).setText(descr);
+      BleDeviceInfo deviceInfo = mDevices.get(position);
+      BluetoothDevice device = deviceInfo.getBluetoothDevice();
+      
+	  int rssi = deviceInfo.getRssi();
+      String addr = device.getAddress();
+
+      String descr = addr.substring(addr.length() - 2, addr.length());
+      descr = "Fizzly " + descr;
+      ((TextView) vg.findViewById(R.id.fizzlyName)).setText(descr);
+      int color = bgTilesColors[Math.abs(addr.hashCode() % bgTilesColors.length)];
+      ((FrameLayout) vg.findViewById(R.id.backgroundLayout)).setBackgroundColor(color);
 
       return vg;
     }
